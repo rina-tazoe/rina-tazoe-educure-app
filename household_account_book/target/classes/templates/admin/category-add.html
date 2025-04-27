@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>カテゴリ追加</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>カテゴリ追加</h1>
+        <form th:action="@{/admin/category/add}" th:object="${category}" method="post">
+            <div class="form-group">
+                <label for="categoryName">カテゴリ名:</label>
+                <input type="text" id="categoryName" th:field="*{categoryName}" class="form-control" required>
+                </div>
+            <div class="form-group">
+                <label for="categoryType">カテゴリの種類:</label>
+                <select id="categoryType" th:field="*{categoryType}" class="form-control" required>
+                    <option value="収入">収入</option>
+                    <option value="支出">支出</option>
+                    </select>
+            </div>
+            <button type="submit" class="btn btn-primary">追加</button>
+            <a th:href="@{/admin/category/list}" class="btn btn-secondary">カテゴリ一覧へ</a>
+            </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>ユーザー削除確認</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>ユーザー削除確認</h1>
+        <p th:if="${userToDelete}">ユーザーID <strong th:text="${userToDelete.userId}"></strong> (<span th:text="${userToDelete.userName}"></span>) を削除します。よろしいですか？</p>
+        <form th:action="@{/admin/users/delete}" method="post" th:if="${userToDelete}">
+            <input type="hidden" name="userId" th:value="${userToDelete.userId}">
+            <button type="submit" class="btn btn-danger">削除</button>
+            </form>
+        <a th:href="@{/admin/users}" class="btn btn-secondary">ユーザー一覧へ戻る</a>
+        </div>
+</body>
+</html>
