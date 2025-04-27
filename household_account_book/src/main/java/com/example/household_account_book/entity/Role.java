@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "role")
+@Table(name = "role") // テーブル名を "roles" に修正
 public class Role {
 
     @Id
@@ -16,8 +16,16 @@ public class Role {
     @Column(name = "role_id")
     private Integer roleId;
 
-    @Column(name = "role_name", nullable = false, length = 50)
+    @Column(name = "role_name", nullable = false, length = 50, unique = true) // unique 制約を追加
     private String roleName;
+
+    public Role() {
+        // デフォルトコンストラクタ
+    }
+
+    public Role(String roleName) {
+        this.roleName = roleName;
+    }
 
     public Integer getRoleId() {
         return roleId;
@@ -33,5 +41,13 @@ public class Role {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "roleId=" + roleId +
+                ", roleName='" + roleName + '\'' +
+                '}';
     }
 }

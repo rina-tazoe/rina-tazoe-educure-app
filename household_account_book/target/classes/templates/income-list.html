@@ -19,23 +19,25 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="income : <span class="math-inline">\{incomes\}"\>
-<td th\:text\="</span>{income.date}"></td>
-                    <td th:text="<span class="math-inline">\{income\.type \=\= '収入' ? \#numbers\.formatDecimal\(income\.amount, 0, 'COMMA', 2, 'POINT'\) \: ''\}"\></td\>
-<td th\:text\="</span>{income.type == '支出' ? #numbers.formatDecimal(income.amount, 0, 'COMMA', 2, 'POINT') : ''}"></td>
-                    <td th:text="<span class="math-inline">\{income\.category\.categoryName\}"\></td\>
-<td th\:text\="</span>{income.description}"></td>
+                <tr th:each="item : ${incomes}">
+                    <td th:text="${item.date}"></td>
+                    <td th:text="${item.type == '収入' ? #numbers.formatDecimal(item.amount, 0, 'COMMA', 0, 'POINT') : ''}"></td>
+                    <td th:text="${item.type == '支出' ? #numbers.formatDecimal(item.amount, 0, 'COMMA', 0, 'POINT') : ''}"></td>
+                    <td th:text="${item.category.categoryName}"></td>
+                    <td th:text="${item.description}"></td>
                     <td>
-                        <a th:href="@{/income/edit/{id}(id=<span class="math-inline">\{income\.incomeId\}\)\}" class\="btn btn\-info btn\-sm"\>編集</a\>
-<a th\:href\="@\{/income/delete/\{id\}\(id\=</span>{income.incomeId})}" class="btn btn-danger btn-sm" onclick="return confirm('削除してもよろしいですか？')">削除</a>
-                        </td>
+                        <a th:if="${item.type == '収入'}" th:href="@{/income/edit/{id}(id=${item.incomeId})}" class="btn btn-info btn-sm">編集</a>
+                        <a th:if="${item.type == '収入'}" th:href="@{/income/delete/{id}(id=${item.incomeId})}" class="btn btn-danger btn-sm" onclick="return confirm('削除してもよろしいですか？')">削除</a>
+                        <a th:if="${item.type == '支出'}" th:href="@{/expense/edit/{id}(id=${item.expenseId})}" class="btn btn-info btn-sm">編集</a>
+                        <a th:if="${item.type == '支出'}" th:href="@{/expense/delete/{id}(id=${item.expenseId})}" class="btn btn-danger btn-sm" onclick="return confirm('削除してもよろしいですか？')">削除</a>
+                    </td>
                 </tr>
             </tbody>
             <tfoot>
                 <tr>
                     <th>合計</th>
-                    <td th:text="<span class="math-inline">\{\#numbers\.formatDecimal\(\#aggregates\.sum\(incomes\.?\[type \=\= '収入'\]\.\!\[amount\]\), 0, 'COMMA', 2, 'POINT'\)\}"\>0</td\>
-<td th\:text\="</span>{#numbers.formatDecimal(#aggregates.sum(incomes.?[type == '支出'].![amount]), 0, 'COMMA', 2, 'POINT')}">0</td>
+                    <td th:text="${#numbers.formatDecimal(#aggregates.sum(incomes.?[type == '収入'].![amount]), 0, 'COMMA', 0, 'POINT')}">0</td>
+                    <td th:text="${#numbers.formatDecimal(#aggregates.sum(incomes.?[type == '支出'].![amount]), 0, 'COMMA', 0, 'POINT')}">0</td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -45,7 +47,7 @@
         <div class="navigation">
             <a th:href="@{/main}" class="btn btn-secondary">メイン画面へ</a>
             <a th:href="@{/income/input}" class="btn btn-success">収支入力画面へ</a>
-            </div>
+        </div>
     </div>
-	</body>
-	</html>
+</body>
+</html>

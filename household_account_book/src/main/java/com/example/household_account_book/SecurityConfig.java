@@ -20,6 +20,8 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/", "/home", "/register", "/css/**", "/reset-password").permitAll()
+                // ↓ この行を追加
+                .requestMatchers("/expenses/list").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin((form) -> form
@@ -27,7 +29,7 @@ public class SecurityConfig {
                 .loginProcessingUrl("/login")
                 .usernameParameter("userId")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/main", true) 
+                .defaultSuccessUrl("/main", true)
                 .permitAll()
             )
             .logout((logout) -> logout.permitAll());

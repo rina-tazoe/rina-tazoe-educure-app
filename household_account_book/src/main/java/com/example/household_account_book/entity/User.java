@@ -30,7 +30,7 @@ public class User {
     private String password;
 
     @ManyToOne
-    @JoinColumn(name = "role", nullable = false)
+    @JoinColumn(name = "role_id", nullable = false) // ★ ここを "role_id" に修正 ★
     private Role role;
 
     @Column(name = "created_at")
