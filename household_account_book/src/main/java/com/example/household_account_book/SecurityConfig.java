@@ -19,14 +19,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/", "/home").permitAll()
+                .requestMatchers("/", "/home", "/register", "/css/**", "/reset-password").permitAll() // ★ /reset-password を追加 ★
                 .anyRequest().authenticated()
             )
             .formLogin((form) -> form
-                .loginPage("/login") // ★ カスタムログインページのパスを指定 ★
-                .loginProcessingUrl("/login") // ログイン処理を行うパス (form の action 属性と一致させる)
-                .usernameParameter("userId") // ユーザー名のリクエストパラメータ名 (form の input name 属性と一致させる)
-                .passwordParameter("password") // パスワードのリクエストパラメータ名 (form の input name 属性と一致させる)
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .usernameParameter("userId")
+                .passwordParameter("password")
                 .permitAll()
             )
             .logout((logout) -> logout.permitAll());
