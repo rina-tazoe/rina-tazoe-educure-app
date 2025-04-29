@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>メイン画面</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>メイン画面</h1>
+        <h2 th:text="${userName} + 'さん、ようこそ！'"></h2>
+
+        <div class="chart-container" style="width:300px; height:300px;">
+            <canvas id="expenseChart"></canvas>
+        </div>
+
+        <div class="menu-buttons">
+            <a th:href="@{/income/input}" class="button">収入入力画面へ</a>
+            <a th:href="@{/expenses/list}" class="button">収支一覧画面へ</a>
+
+            <div sec:authorize="hasAuthority('管理者')">
+                <a th:href="@{/users}" class="button">ユーザー管理画面へ</a>
+                <a th:href="@{/categories}" class="button">カテゴリ管理画面へ</a>
+            </div>
+
+            <a th:href="@{/users/delete}" class="button">退会</a>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="button">ログアウト</button>
+            </form>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const ctx = document.getElementById('expenseChart');
+        const labels = /*[[${expenseLabels}]]*/ [];
+        const dataValues = /*[[${expenseData}]]*/ [];
+        const backgroundColors = [
+            'rgb(255, 99, 132)',
+            'rgb(255, 159, 64)',
+            'rgb(255, 205, 86)',
+            'rgb(75, 192, 192)',
+            'rgb(54, 162, 235)',
+            'rgb(153, 102, 255)',
+            'rgb(201, 203, 207)'
+        ];
+
+        const data = {
+            labels: labels,
+            datasets: [{
+                label: '支出内訳',
+                data: dataValues,
+                backgroundColor: backgroundColors,
+                hoverOffset: 4
+            }]
+        };
+
+        new Chart(ctx, {
+            type: 'pie',
+            data: data,
+        });
+    </script>
+</body>
+</html>
