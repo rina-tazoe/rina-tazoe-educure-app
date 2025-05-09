@@ -48,7 +48,7 @@ public class AdminUserController {
     @PostMapping("/delete")
     public String deleteUser(@RequestParam("userId") Integer userId, HttpSession session, RedirectAttributes redirectAttributes) {
         if ("管理者".equals(session.getAttribute("userRole"))) {
-            userService.deleteUser(userId); // ★ 修正 ★ Integer 型の userId を渡す
+            userService.deleteUser(userId); 
             redirectAttributes.addFlashAttribute("message", "ユーザーID " + userId + " を削除しました。");
             return "redirect:/admin/users";
         } else {

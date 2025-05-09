@@ -11,13 +11,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-// import org.hibernate.annotations.SQLDelete; // 削除
-// import org.hibernate.annotations.Where;   // 削除
+
 
 @Entity
 @Table(name = "users")
-// @SQLDelete(sql = "UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE user_id = ?") // 削除
-// @Where(clause = "deleted_at IS NULL") // 削除
+
 public class User {
 
     @Id
@@ -31,11 +29,11 @@ public class User {
     @Column(name = "email", nullable = false, length = 50, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false, length = 255) // パスワードはハッシュ化して保存することを推奨
+    @Column(name = "password", nullable = false, length = 255) 
     private String password;
 
     @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false) // ★ ここを "role_id" に修正 ★
+    @JoinColumn(name = "role_id", nullable = false) 
     private Role role;
 
     @Column(name = "created_at")

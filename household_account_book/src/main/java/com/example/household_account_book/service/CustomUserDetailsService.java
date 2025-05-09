@@ -31,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             logger.info("User found: {}", user); // 取得したユーザー情報を出力
-            // ★ 削除されたユーザーは認証させない ★
+            // 削除されたユーザーは認証させない 
             if (user.getDeletedAt() != null) {
                 logger.warn("User {} is退会済み", email);
                 throw new UsernameNotFoundException("ユーザー " + email + " は退会済みです。");

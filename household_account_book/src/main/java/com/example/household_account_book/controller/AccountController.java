@@ -39,8 +39,8 @@ public class AccountController {
             // 収支一覧を表示するThymeleafテンプレート名を返す
             return "income-list";
         } else {
-            // 認証されていない場合の処理 (例: エラーページへリダイレクト)
-            return "error/unauthorized"; // ★ 要作成 ★
+            // 認証されていない場合の処理 (エラーページへリダイレクト)
+            return "error/unauthorized"; 
         }
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import com.example.household_account_book.service.CategoryService;
 
 @Controller
-public class CategoryController { // クラスレベルの @RequestMapping は削除
+public class CategoryController { 
 
     private final CategoryService categoryService;
 

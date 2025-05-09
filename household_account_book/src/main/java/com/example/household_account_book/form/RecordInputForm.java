@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class RecordInputForm {
     private LocalDate date;
-    private String type; // "収入" または "支出"
+    private String type; 
     private Integer incomeCategoryId;
     private Integer expenseCategoryId;
     private String description;

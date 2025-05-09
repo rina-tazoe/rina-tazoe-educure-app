@@ -11,6 +11,6 @@ import com.example.household_account_book.entity.User;
 @Repository
 public interface IncomeRepository extends JpaRepository<Income, Integer> {
     List<Income> findByUserOrderByDateDesc(User user);
-    // ★ 削除またはコメントアウト ★
-    // List<Income> findByUserIdOrderByDateDesc(int userId);
+    
+    
 }

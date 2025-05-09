@@ -24,7 +24,7 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @PersistenceContext // ★ EntityManager を注入 ★
+    @PersistenceContext 
     private EntityManager entityManager;
 
     @Autowired
@@ -58,12 +58,12 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Integer id) { // ★ 管理者用: ID で削除 ★
+    public void deleteUser(Integer id) { 
         userRepository.deleteById(id);
     }
 
     @Transactional
-    public void deleteUser(String username) { // ★ 一般ユーザー用: ユーザー名で削除 ★
+    public void deleteUser(String username) { 
         Optional<User> userOptional = userRepository.findByUserName(username);
         userOptional.ifPresent(user -> {
             entityManager.remove(entityManager.contains(user) ? user : entityManager.merge(user));

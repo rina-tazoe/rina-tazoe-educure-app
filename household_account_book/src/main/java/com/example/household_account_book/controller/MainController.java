@@ -26,7 +26,7 @@ public class MainController {
             String userName = userDetails.getDisplayName();
             logger.info("ログインユーザー名: {}", userName);
             model.addAttribute("userName", userName);
-            // TODO: 円グラフのデータをServiceから取得してModelに追加
+            // 円グラフのデータをServiceから取得してModelに追加
             return "main";
         } else {
             logger.warn("認証情報が存在しないか、期待される型ではありません。ログイン画面にリダイレクトします。");

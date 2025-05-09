@@ -29,7 +29,7 @@ public class WithdrawalController {
     public String withdrawalConfirm(HttpSession session, Model model) {
         Integer userId = (Integer) session.getAttribute("loggedInUser");
         if (userId != null) {
-            userService.findById(userId).ifPresent(user -> model.addAttribute("user", user)); // ★★★ model.addAttribute("user", user); に修正 ★★★
+            userService.findById(userId).ifPresent(user -> model.addAttribute("user", user)); 
             return "withdrawal-confirm";
         } else {
             return "redirect:/login";
@@ -40,7 +40,7 @@ public class WithdrawalController {
     public String withdraw(@RequestParam("userId") Integer userId, @RequestParam("password") String password, HttpSession session, RedirectAttributes redirectAttributes) {
         Integer loggedInUserId = (Integer) session.getAttribute("loggedInUser");
         if (loggedInUserId != null && loggedInUserId.equals(userId)) {
-            Optional<User> userOptional = userService.findById(userId); // ★★★ Optional<User> で取得 ★★★
+            Optional<User> userOptional = userService.findById(userId); 
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
                 // パスワードの照合（ハッシュ化されたパスワードとの比較）

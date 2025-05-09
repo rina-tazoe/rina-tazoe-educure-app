@@ -60,7 +60,7 @@ public class AdminCategoryController {
 
     @PostMapping("/edit/{id}")
     public String editCategory(@PathVariable Integer id, @ModelAttribute Category category) {
-        category.setCategoryId(id); // ★ ここを修正しました ★
+        category.setCategoryId(id); 
         categoryService.save(category);
         return "redirect:/admin/categories";
     }
@@ -69,11 +69,11 @@ public class AdminCategoryController {
     public String inlineEditCategory(@PathVariable Integer id,
                                      @RequestParam("categoryName") String categoryName,
                                      @RequestParam("color") String color,
-                                     @RequestParam("categoryType") String categoryType) { // ★ 追加 ★
+                                     @RequestParam("categoryType") String categoryType) { 
         categoryService.findById(id).ifPresent(category -> {
             category.setCategoryName(categoryName);
             category.setColor(color);
-            category.setCategoryType(categoryType); // ★ 追加 ★
+            category.setCategoryType(categoryType); 
             categoryService.save(category);
         });
         return "redirect:/admin/categories";

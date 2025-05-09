@@ -20,7 +20,7 @@ public class ExpenseService {
     private ExpenseRepository expenseRepository;
 
     @Autowired
-    private UserRepository userRepository; // ★ 追加 ★
+    private UserRepository userRepository; 
 
     public void recordExpense(Expense expense) {
         expenseRepository.save(expense);

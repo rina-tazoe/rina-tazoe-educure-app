@@ -22,10 +22,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByUserName(String userName);
 
     @Transactional
-    void deleteByUserName(String userName); // ★ 物理削除用メソッドを追加 ★
+    void deleteByUserName(String userName); 
 
-    // @Transactional
-    // @Modifying
-    // @Query("UPDATE User u SET u.deletedAt = :deletedAt WHERE u.userName = :userName")
-    // void softDeleteByUserName(String userName, LocalDateTime deletedAt); // ★ このメソッドを削除 ★
+    
 }

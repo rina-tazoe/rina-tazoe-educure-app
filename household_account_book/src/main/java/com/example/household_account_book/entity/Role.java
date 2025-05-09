@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "role") // テーブル名を "roles" に修正
+@Table(name = "role") 
 public class Role {
 
     @Id
@@ -20,7 +20,7 @@ public class Role {
     private String roleName;
 
     public Role() {
-        // デフォルトコンストラクタ
+        
     }
 
     public Role(String roleName) {

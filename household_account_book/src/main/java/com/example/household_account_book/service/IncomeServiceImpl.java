@@ -20,7 +20,7 @@ public class IncomeServiceImpl implements IncomeService {
     private IncomeRepository incomeRepository;
 
     @Autowired
-    private UserRepository userRepository; // ★ 追加 ★
+    private UserRepository userRepository; 
 
     @Override
     public void recordIncome(Income income) {

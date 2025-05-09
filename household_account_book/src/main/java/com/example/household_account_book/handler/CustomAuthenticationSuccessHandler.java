@@ -26,7 +26,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         if (roles.contains("管理者")) {
             session.setAttribute("userRole", "管理者");
         } else {
-            session.setAttribute("userRole", "一般"); // 必要に応じて
+            session.setAttribute("userRole", "一般"); 
         }
         response.sendRedirect("/main"); // ログイン後のリダイレクト先
     }

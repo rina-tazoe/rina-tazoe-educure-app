@@ -34,7 +34,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getEmail(); // ★ 修正: メールアドレスを返す ★
+        return user.getEmail(); 
     }
 
     public String getDisplayName() {

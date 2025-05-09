@@ -7,7 +7,7 @@ public class ExpenseInputForm {
     private Integer expenseCategoryId;
     private String description;
     private Integer amount;
-    private String type; // "支出" で固定でも良い
+    private String type; 
 
     // ゲッターとセッター
     public LocalDate getDate() {

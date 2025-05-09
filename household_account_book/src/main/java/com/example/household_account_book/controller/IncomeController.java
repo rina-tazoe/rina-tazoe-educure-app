@@ -33,13 +33,13 @@ public class IncomeController {
 
     @GetMapping("/income/input")
     public String incomeInput(Model model) {
-        logger.info("/income/input が呼び出されました"); // ★ 追加 ★
-        model.addAttribute("recordInputForm", new RecordInputForm()); // ★ 修正 ★
+        logger.info("/income/input が呼び出されました"); 
+        model.addAttribute("recordInputForm", new RecordInputForm()); 
         model.addAttribute("today", LocalDate.now());
         List<Category> incomeCategories = categoryService.findIncomeCategories();
         List<Category> expenseCategories = categoryService.findExpenseCategories();
-        logger.info("収入カテゴリ: {}", incomeCategories); // ★ 追加 ★
-        logger.info("支出カテゴリ: {}", expenseCategories); // ★ 追加 ★
+        logger.info("収入カテゴリ: {}", incomeCategories); 
+        logger.info("支出カテゴリ: {}", expenseCategories); 
         model.addAttribute("incomeCategories", incomeCategories);
         model.addAttribute("expenseCategories", expenseCategories);
         return "income-input";

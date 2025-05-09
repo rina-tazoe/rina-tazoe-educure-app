@@ -28,7 +28,7 @@ public class RegistrationController {
 
     @PostMapping("/register")
     public String registerSubmit(@ModelAttribute User user) {
-        // ★★★ 登録処理をサービスに User オブジェクトごと渡す ★★★
+        
         userService.registerUser(user);
         return "redirect:/login?registerSuccess";
     }

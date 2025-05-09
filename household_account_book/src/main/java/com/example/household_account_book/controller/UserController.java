@@ -39,7 +39,7 @@ public class UserController {
                              RedirectAttributes redirectAttributes) {
         if (userDetails != null) {
             String username = userDetails.getUsername();
-            userService.deleteUser(username); // 修正: String 型の username を渡す
+            userService.deleteUser(username); 
 
             // Spring Securityでログアウト処理を行う
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
