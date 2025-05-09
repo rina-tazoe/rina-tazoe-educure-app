@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>退会確認</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>退会確認</h1>
+        <p th:if="${userName}">本当に退会しますか？</p>
+        <p th:if="${userName}">退会すると、これまでのデータはすべて削除され、復元することはできません。</p>
+
+        <form th:action="@{/users/delete}" method="post">
+            <button type="submit" class="btn btn-danger">退会する</button>
+        </form>
+
+        <a th:href="@{/main}" class="btn btn-secondary">キャンセル</a>
+    </div>
+</body>
+</html>

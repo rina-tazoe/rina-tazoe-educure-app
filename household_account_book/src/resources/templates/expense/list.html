@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>支出一覧</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header th:replace="~{fragment/header :: header}"></header>
+
+    <div class="container">
+        <h1>支出一覧</h1>
+
+        <div th:if="${expenses.isEmpty()}">
+            <p>まだ支出が登録されていません。</p>
+        </div>
+
+        <div th:unless="${expenses.isEmpty()}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>日付</th>
+                        <th>カテゴリ</th>
+                        <th>説明</th>
+                        <th class="right-align">金額</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="expense : ${expenses}">
+                        <td th:text="${#temporals.format(expense.date, 'yyyy-MM-dd')}"></td>
+                        <td th:text="${expense.category.categoryName}"></td>
+                        <td th:text="${expense.description}"></td>
+						<td class="right-align" th:text="${expense.amount} + ' 円'"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="button-area">
+            <a th:href="@{/expenses/input}" class="button">新しい支出を登録する</a>
+            <a th:href="@{/}" class="button secondary">メインメニューに戻る</a>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragment/footer :: footer}"></footer>
+</body>
+</html>

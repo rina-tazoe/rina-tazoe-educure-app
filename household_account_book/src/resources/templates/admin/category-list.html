@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>カテゴリ管理</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .edit-form {
+            display: none;
+        }
+        .editing {
+            display: table-row;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>カテゴリ管理</h1>
+    <div th:if="${message}" class="message" th:text="${message}"></div>
+
+    <h2>新規カテゴリ追加</h2>
+    <form th:action="@{/admin/categories/add}" th:object="${newCategory}" method="post">
+        <div>
+            <label for="categoryName">カテゴリ名:</label>
+            <input type="text" id="categoryName" th:field="*{categoryName}" required>
+        </div>
+        <div>
+            <label for="categoryType">カテゴリタイプ:</label>
+            <select id="categoryType" th:field="*{categoryType}">
+                <option value="収入">収入</option>
+                <option value="支出">支出</option>
+            </select>
+        </div>
+        <div>
+            <label for="color">色:</label>
+            <input type="text" id="color" th:field="*{color}">
+            <small>例: 赤, 緑, 青, 黄 など</small>
+        </div>
+        <button type="submit" class="button">追加</button>
+    </form>
+    <hr/>
+
+    <h2>収支カテゴリ一覧</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>カテゴリ名</th>
+            <th>カテゴリタイプ</th>
+            <th>色</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="category : ${categories}">
+            <td th:text="${category.categoryId}"></td>
+            <td th:text="${category.categoryName}"></td>
+            <td th:text="${category.categoryType}"></td>
+            <td th:text="${category.color}"></td>
+            <td>
+                <button type="button" th:onclick="'toggleEditForm(' + ${category.categoryId} + ')'">編集</button>
+                <a th:href="@{/admin/categories/delete/{id}(id=${category.categoryId})}"
+                   onclick="return confirm('このカテゴリを削除してもよろしいですか？')">削除</a>
+            </td>
+        </tr>
+        <tr th:each="category : ${categories}" class="edit-form" th:id="'edit-form-' + ${category.categoryId}">
+            <form th:action="@{/admin/categories/inline-edit/{id}(id=${category.categoryId})}" method="post">
+                <td><span th:text="${category.categoryId}"></span></td>
+                <td><input type="text" name="categoryName" th:value="${category.categoryName}" required></td>
+                <td>
+                    <select name="categoryType">
+                        <option value="収入" th:selected="${category.categoryType == '収入'}">収入</option>
+                        <option value="支出" th:selected="${category.categoryType == '支出'}">支出</option>
+                    </select>
+                </td>
+                <td><input type="text" name="color" th:value="${category.color}"></td>
+                <td><button type="submit" class="button small">保存</button>
+                    <button type="button" th:onclick="'toggleEditForm(' + ${category.categoryId} + ')'" class="button small">キャンセル</button>
+                </td>
+            </form>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/main}" class="button">メイン画面へ</a>
+</div>
+
+<script th:inline="javascript">
+    function toggleEditForm(categoryId) {
+        const editForm = document.getElementById('edit-form-' + categoryId);
+        editForm.classList.toggle('editing');
+    }
+</script>
+</body>
+</html>
