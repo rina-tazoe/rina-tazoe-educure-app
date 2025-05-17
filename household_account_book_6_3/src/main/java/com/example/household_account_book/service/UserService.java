@@ -6,7 +6,10 @@ import java.util.Optional;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,8 @@ import com.example.household_account_book.repository.UserRepository;
 
 @Service
 public class UserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -63,8 +68,18 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(String username) {
-        userRepository.deleteByUserName(username); 
+    public void deleteUserByUserName(String username) {
+        logger.info("ユーザー名による退会処理を開始します。ユーザー名: {}", username);
+        Query query = entityManager.createQuery("DELETE FROM User u WHERE u.userName = :userName");
+        query.setParameter("userName", username);
+        int deletedCount = query.executeUpdate();
+        logger.info("EntityManager で {} 件のユーザーを削除しようとしました。", deletedCount);
+    }
+
+    @Transactional
+    public void deleteUserByEmail(String email) { // メールアドレスで削除するメソッドを追加
+        logger.info("メールアドレスによる退会処理を開始します。メールアドレス: {}", email);
+        userRepository.deleteByEmail(email);
     }
 
     public Optional<User> findByEmail(String email) {

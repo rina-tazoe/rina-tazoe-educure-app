@@ -39,7 +39,7 @@ public class UserController {
                              RedirectAttributes redirectAttributes) {
         if (userDetails != null) {
             String username = userDetails.getUsername();
-            userService.deleteUser(username);
+            userService.deleteUserByEmail(username); // 修正: deleteUserByEmail を呼び出す
 
             // Spring Securityでログアウト処理を行う
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -50,6 +50,6 @@ public class UserController {
             redirectAttributes.addFlashAttribute("message", "退会処理が完了しました。");
             return "redirect:/login?logout";
         }
-        return "redirect:/login"; 
+        return "redirect:/login";
     }
 }
