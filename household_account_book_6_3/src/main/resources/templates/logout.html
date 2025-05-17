@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>ログアウト</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>ログアウトしました</h1>
+        <form th:action="@{/login}" method="post">
+            <button type="submit" class="btn btn-primary">ログイン画面へ</button>
+        </form>
+    </div>
+</body>
+</html>

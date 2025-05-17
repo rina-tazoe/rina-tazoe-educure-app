@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>収支一覧</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>収支一覧</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>日付</th>
+                    <th>収入金額</th>
+                    <th>支出金額</th>
+                    <th>カテゴリ</th>
+                    <th>メモ</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="income : ${incomes}">
+                    <td th:text="${#temporals.format(income.date, 'yyyy-MM-dd')}"></td>
+                    <td th:text="${#numbers.formatDecimal(income.amount, 0, 'COMMA', 0, 'POINT')}"></td>
+                    <td></td>
+                    <td th:text="${income.category.categoryName}"></td>
+                    <td th:text="${income.description}"></td>
+                    <td>
+                        <a th:href="@{/income/edit/{id}(id=${income.incomeId})}" class="btn btn-info btn-sm">編集</a>
+                        <a th:href="@{/income/delete/{id}(id=${income.incomeId})}" class="btn btn-danger btn-sm" onclick="return confirm('削除してもよろしいですか？')">削除</a>
+                    </td>
+                </tr>
+                <tr th:each="expense : ${expenses}">
+                    <td th:text="${#temporals.format(expense.date, 'yyyy-MM-dd')}"></td>
+                    <td></td>
+                    <td th:text="${#numbers.formatDecimal(expense.amount, 0, 'COMMA', 0, 'POINT')}"></td>
+                    <td th:text="${expense.category.categoryName}"></td>
+                    <td th:text="${expense.description}"></td>
+                    <td>
+						<a th:href="@{/expenses/edit/{id}(id=${expense.expenseId})}" class="btn btn-info btn-sm">編集</a>
+                        <a th:href="@{/expenses/delete/{id}(id=${expense.expenseId})}" class="btn btn-danger btn-sm" onclick="return confirm('削除してもよろしいですか？')">削除</a>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>合計</th>
+                    <td th:text="${#numbers.formatDecimal(#aggregates.sum(incomes.![amount]), 0, 'COMMA', 0, 'POINT')}">0</td>
+                    <td th:text="${#numbers.formatDecimal(#aggregates.sum(expenses.![amount]), 0, 'COMMA', 0, 'POINT')}">0</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+        <div class="navigation">
+            <a th:href="@{/main}" class="btn btn-secondary">メイン画面へ</a>
+        </div>
+    </div>
+</body>

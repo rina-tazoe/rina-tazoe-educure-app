@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>ユーザー一覧</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>ユーザー一覧</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ユーザー名</th>
+                    <th>メールアドレス</th>
+                    <th>ロール</th>
+                    <th>作成日時</th>
+                    <th>更新日時</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.userId}"></td>
+                    <td th:text="${user.userName}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${user.role.roleName}"></td>
+                    <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                    <td th:text="${user.updatedAt != null ? #temporals.format(user.updatedAt, 'yyyy-MM-dd HH:mm:ss') : ''}"></td>
+                    <td>
+                        <a th:href="@{/admin/users/delete/{id}(id=${user.userId})}" class="btn btn-danger btn-sm"
+                           onclick="return confirm('このユーザーを削除してもよろしいですか？');">削除</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="links">
+            <a th:href="@{/main}" class="btn btn-secondary">メイン画面へ</a>
+        </div>
+    </div>
+</body>
+</html>
