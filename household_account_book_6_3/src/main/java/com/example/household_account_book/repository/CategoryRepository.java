@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.household_account_book.entity.Category;
+import com.example.household_account_book.entity.Color;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
@@ -27,4 +28,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
     @Override
     @Query("SELECT c FROM Category c LEFT JOIN FETCH c.color WHERE c.categoryId = :id")
     Optional<Category> findById(Integer id);
+    
+    List<Category> findByColor(Color color);
 }

@@ -9,19 +9,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.household_account_book.entity.Category;
 import com.example.household_account_book.entity.Color;
+import com.example.household_account_book.repository.CategoryRepository;
 import com.example.household_account_book.repository.ColorRepository;
 
 @Service
-@Transactional
+@Transactional 
 public class ColorServiceImpl implements ColorService {
 
     private static final Logger logger = LoggerFactory.getLogger(ColorServiceImpl.class);
     private final ColorRepository colorRepository;
+    private final CategoryRepository categoryRepository;
 
     @Autowired
-    public ColorServiceImpl(ColorRepository colorRepository) {
+    public ColorServiceImpl(ColorRepository colorRepository, CategoryRepository categoryRepository) { // コンストラクタを変更
         this.colorRepository = colorRepository;
+        this.categoryRepository = categoryRepository; 
     }
 
     @Override
@@ -53,6 +57,17 @@ public class ColorServiceImpl implements ColorService {
 
     @Override
     public void delete(Integer id) {
+        Color colorToDelete = colorRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Color not found with ID: " + id));
+
+        List<Category> categoriesUsingColor = categoryRepository.findByColor(colorToDelete); 
+        for (Category category : categoriesUsingColor) {
+            
+            category.setColor(null);
+        }
+        categoryRepository.saveAll(categoriesUsingColor); 
+
+       
         colorRepository.deleteById(id);
     }
 }
