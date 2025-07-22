@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${estimate.customer?.lastName} + ${estimate.customer?.firstName} + 'さんの見積もり詳細'"></title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 700px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        h1 { color: #333; }
+        h2 { color: #555; margin-top: 25px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        p { margin-bottom: 10px; }
+        strong { display: inline-block; width: 120px; }
+        .alert { padding: 10px; margin-bottom: 15px; border-radius: 4px; }
+        .alert-success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+        .alert-danger { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        .btn {
+            display: inline-block;
+            padding: 8px 15px;
+            margin-right: 10px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-warning { background-color: #ffc107; color: #212529; }
+        .btn:hover { background-color: #0056b3; }
+        .btn-warning:hover { background-color: #e0a800; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 th:text="${estimate.customer?.lastName} + ${estimate.customer?.firstName} + 'さんの見積もり詳細'">〇〇さんの見積もり詳細</h1>
+
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <h2>見積もり結果</h2>
+        <p><strong>保険名:</strong> <span th:text="${estimate.insuranceProduct?.name}"></span></p> <p><strong>保険内容:</strong>
+            <span th:if="${estimate.insuranceProduct?.name == '医療保険'}"> 1日あたり入院費 <span th:text="${#numbers.formatInteger(estimate.dailyHospitalizationFee, 1, 'COMMA')}"></span>円、
+                最大支払い日数 <span th:text="${estimate.paymentDays}"></span>日
+            </span>
+            <span th:if="${estimate.insuranceProduct?.name == 'がん保険'}"> 給付金 <span th:text="${#numbers.formatInteger(estimate.benefitAmount, 1, 'COMMA')}"></span>円、
+                支払い回数 <span th:text="${estimate.numberOfPayments}"></span>回
+            </span>
+            <span th:if="${estimate.insuranceProduct?.name == '終身保険'}"> 給付金 <span th:text="${#numbers.formatInteger(estimate.benefitAmount, 1, 'COMMA')}"></span>円
+            </span>
+            <span th:unless="${estimate.insuranceProduct?.name == '医療保険' or estimate.insuranceProduct?.name == 'がん保険' or estimate.insuranceProduct?.name == '終身保険'}"> <span th:text="${estimate.insuranceProduct?.description}"></span> </span>
+        </p>
+        <p><strong>月々金額:</strong> <span th:text="${#numbers.formatInteger(estimate.monthlyPremium, 1, 'COMMA')}"></span>円</p>
+        <p><strong>解約返戻金:</strong> <span th:text="${#numbers.formatInteger(estimate.surrenderValue, 1, 'COMMA')}"></span>円</p> <h2>お客様情報</h2>
+        <p><strong>生年月日:</strong> <span th:text="${#temporals.format(estimate.customer?.dateOfBirth, 'yyyy年MM月dd日')}"></span></p>
+        <p><strong>電話番号:</strong> <span th:text="${estimate.customer?.phoneNumber}"></span></p>
+        <p><strong>メールアドレス:</strong> <span th:text="${estimate.customer?.email}"></span></p>
+
+        <p>
+            <a th:href="@{'/estimates/' + ${estimate.id} + '/edit'}" class="btn btn-warning">編集ボタン</a> <span style="margin-left: 15px;"></span>
+            <a th:href="@{/home}" class="btn">ホームに戻る</a>
+            <span style="margin-left: 15px;"></span>
+            <a th:href="@{/customers}" class="btn">顧客一覧に戻る</a>
+        </p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${quoteEditForm.lastName} + ${quoteEditForm.firstName} + 'さんの見積もり編集'"></title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // 保険商品または年齢が変更されたときにAjaxで金額を再取得
+            $('#insuranceType, #ageGroupMin, #gender').change(function() {
+                var selectedAgeGroupMin = $('#ageGroupMin').val();
+                var selectedGender = $('#gender').val();
+                var selectedInsuranceType = $('#insuranceType').val();
+
+                if (selectedAgeGroupMin && selectedGender && selectedInsuranceType) {
+                    $.ajax({
+                        url: '/api/quote/calculate-monthly-payment', // 新しいAPIエンドポイント
+                        type: 'GET',
+                        data: {
+                            ageGroupMin: selectedAgeGroupMin,
+                            gender: selectedGender,
+                            insuranceType: selectedInsuranceType
+                        },
+                        success: function(response) {
+                            // APIからの応答で月々金額と返金金額を更新
+                            $('#monthlyPaymentDisplay').text(response.monthlyPayment.toLocaleString() + '円');
+                            $('#benefitAmountDisplay').text(response.benefitAmount.toLocaleString() + '円');
+                            // 隠しフィールドにも値をセット (サーバー側で再計算するので必須ではないが、安全のため)
+                            $('#monthlyPaymentHidden').val(response.monthlyPayment);
+                            $('#benefitAmountHidden').val(response.benefitAmount);
+
+                            // 保険内容も更新
+                            var insuranceContent = "";
+                            if (response.insuranceType === "医療保険") {
+                                insuranceContent = "1日あたり入院費 " + response.dailyHospitalizationFee.toLocaleString() + "円、 最大支払い日数 " + response.paymentDays + "日";
+                            } else if (response.insuranceType === "がん保険") {
+                                insuranceContent = "給付金 " + response.benefitAmount.toLocaleString() + "円、 支払い回数 " + response.numberOfPayments + "回";
+                            } else if (response.insuranceType === "終身保険") {
+                                insuranceContent = "給付金 " + response.benefitAmount.toLocaleString() + "円";
+                            }
+                            $('#insuranceContentDisplay').text(insuranceContent);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error fetching payment details: ", error);
+                            // エラー時の処理（例: 金額表示をクリアする）
+                            $('#monthlyPaymentDisplay').text("N/A");
+                            $('#benefitAmountDisplay').text("N/A");
+                            $('#insuranceContentDisplay').text("N/A");
+                        }
+                    });
+                } else {
+                    // どれかが選択されていない場合は金額表示をクリア
+                    $('#monthlyPaymentDisplay').text("N/A");
+                    $('#benefitAmountDisplay').text("N/A");
+                    $('#insuranceContentDisplay').text("N/A");
+                }
+            });
+            // ページロード時に一度計算（既存の値を表示するため）
+            $('#insuranceType').change(); // いずれかのプルダウンのchangeイベントをトリガー
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1 th:text="${quoteEditForm.lastName} + ${quoteEditForm.firstName} + 'さんの見積もり編集'">〇〇さんの見積もり編集</h1>
+
+        <form th:action="@{/quote/update}" th:object="${quoteEditForm}" method="post">
+            <input type="hidden" th:field="*{id}" />
+
+            <div class="form-group">
+                <label for="lastName">姓:</label>
+                <input type="text" id="lastName" th:field="*{lastName}" class="form-control" />
+                <span class="text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
+            </div>
+            <div class="form-group">
+                <label for="firstName">名:</label>
+                <input type="text" id="firstName" th:field="*{firstName}" class="form-control" />
+                <span class="text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
+            </div>
+            <div class="form-group">
+                <label for="ageGroupMin">年齢:</label>
+                <select id="ageGroupMin" th:field="*{ageGroupMin}" class="form-control">
+                    <option value="">選択してください</option>
+                    <option th:each="entry : ${ageGroups}" th:value="${entry.key}" th:text="${entry.value}">0~9</option>
+                </select>
+                <span class="text-danger" th:if="${#fields.hasErrors('ageGroupMin')}" th:errors="*{ageGroupMin}"></span>
+            </div>
+            <div class="form-group">
+                <label for="gender">性別:</label>
+                <select id="gender" th:field="*{gender}" class="form-control">
+                    <option value="">選択してください</option>
+                    <option th:each="g : ${genders}" th:value="${g}" th:text="${g}">男性</option>
+                </select>
+                <span class="text-danger" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></span>
+            </div>
+            <div class="form-group">
+                <label for="insuranceType">保険商品:</label>
+                <select id="insuranceType" th:field="*{insuranceType}" class="form-control">
+                    <option value="">選択してください</option>
+                    <option th:each="type : ${insuranceTypes}" th:value="${type}" th:text="${type}">医療保険</option>
+                </select>
+                <span class="text-danger" th:if="${#fields.hasErrors('insuranceType')}" th:errors="*{insuranceType}"></span>
+            </div>
+
+            <div class="form-group">
+                <label>月々金額:</label>
+                <span id="monthlyPaymentDisplay" th:text="${#numbers.formatInteger(quoteEditForm.monthlyPayment, 1, 'COMMA')} + '円'"></span>
+                <input type="hidden" id="monthlyPaymentHidden" th:field="*{monthlyPayment}" />
+            </div>
+            <div class="form-group">
+                <label>返金金額（給付金）:</label>
+                <span id="benefitAmountDisplay" th:text="${#numbers.formatInteger(quoteEditForm.benefitAmount, 1, 'COMMA')} + '円'"></span>
+                <input type="hidden" id="benefitAmountHidden" th:field="*{benefitAmount}" />
+            </div>
+            <div class="form-group">
+                <label>保険内容:</label>
+                <span id="insuranceContentDisplay">
+                    <span th:if="${quoteEditForm.insuranceType == '医療保険'}" th:text="'1日あたり入院費 ' + ${#numbers.formatInteger(quoteEditForm.dailyHospitalizationFee, 1, 'COMMA')} + '円、 最大支払い日数 ' + ${quoteEditForm.paymentDays} + '日'"></span>
+                    <span th:if="${quoteEditForm.insuranceType == 'がん保険'}" th:text="'給付金 ' + ${#numbers.formatInteger(quoteEditForm.benefitAmount, 1, 'COMMA')} + '円、 支払い回数 ' + ${quoteEditForm.numberOfPayments} + '回'"></span>
+                    <span th:if="${quoteEditForm.insuranceType == '終身保険'}" th:text="'給付金 ' + ${#numbers.formatInteger(quoteEditForm.benefitAmount, 1, 'COMMA')} + '円'"></span>
+                </span>
+                <input type="hidden" th:field="*{dailyHospitalizationFee}" />
+                <input type="hidden" th:field="*{paymentDays}" />
+                <input type="hidden" th:field="*{numberOfPayments}" />
+            </div>
+
+
+            <h3>お客様情報</h3>
+            <div class="form-group">
+                <label for="birthDate">生年月日:</label>
+                <input type="text" id="birthDate" th:field="*{birthDate}" class="form-control" placeholder="例: 1990-01-01" />
+            </div>
+            <div class="form-group">
+                <label for="phoneNumber">電話番号:</label>
+                <input type="text" id="phoneNumber" th:field="*{phoneNumber}" class="form-control" placeholder="例: 090-1234-5678" />
+            </div>
+            <div class="form-group">
+                <label for="emailAddress">メールアドレス:</label>
+                <input type="email" id="emailAddress" th:field="*{emailAddress}" class="form-control" placeholder="例: example@example.com" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">変更ボタン</button>
+        </form>
+        <p>
+            <a th:href="@{'/quote/' + ${quoteEditForm.id}}">見積もり詳細に戻る</a>
+            <span style="margin-left: 15px;"></span>
+            <a th:href="@{/home}">ホームに戻る</a>
+        </p>
+    </div>
+</body>
+</html>

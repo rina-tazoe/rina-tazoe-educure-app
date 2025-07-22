@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product.productName} + ' 詳細'"></title> <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); width: 800px; max-width: 90%; text-align: center; }
+        h1 { color: #333; margin-bottom: 20px; }
+        h2 { color: #007bff; margin-top: 30px; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .back-link { display: block; margin-top: 20px; color: #007bff; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 th:text="${product.productName}">がん保険 詳細</h1> <p th:text="${product.productDescription}">商品の説明</p> <h2>保険料・給付金詳細</h2>
+        <div th:if="${cancerRates.isEmpty()}">
+            <p>詳細情報が登録されていません。</p>
+        </div>
+        <div th:unless="${cancerRates.isEmpty()}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>年齢</th>
+                        <th>支払い月額 (男性)</th>
+                        <th>支払い月額 (女性)</th>
+                        <th>給付金</th>
+                        <th>支払い回数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="rate : ${cancerRates}">
+                        <td th:text="${rate.minAge} + '歳～' + ${rate.maxAge} + '歳'">0歳～9歳</td>
+                        <td th:text="${#numbers.formatInteger(rate.paymentMonthlyMale, 1, 'COMMA')} + '円'">600円</td>
+                        <td th:text="${#numbers.formatInteger(rate.paymentMonthlyFemale, 1, 'COMMA')} + '円'">700円</td>
+                        <td th:text="${rate.benefitAmount}">50万</td> <td th:text="${rate.paymentFrequency} + '回'">2回</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <a th:href="@{/products}" class="back-link">商品一覧へ戻る</a>
+    </div>
+</body>
+</html>

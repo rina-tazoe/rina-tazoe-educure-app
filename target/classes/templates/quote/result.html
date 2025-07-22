@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>見積もり結果画面</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); width: 800px; max-width: 90%; text-align: center; }
+        h1 { color: #333; margin-bottom: 20px; }
+        h2 { color: #007bff; margin-top: 30px; margin-bottom: 15px; }
+        .quote-details, .customer-form { text-align: left; margin-bottom: 20px; }
+        .quote-details p { margin-bottom: 8px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input[type="text"], input[type="date"], input[type="email"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: block;
+        }
+        .button-group {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        button[type="submit"] {
+            background-color: #28a745;
+            color: white;
+        }
+        button[type="submit"]:hover {
+            background-color: #218838;
+        }
+        .edit-button {
+            background-color: #ffc107;
+            color: #333;
+            text-decoration: none;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .edit-button:hover {
+            background-color: #e0a800;
+        }
+        .home-button {
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .home-button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>見積もり結果</h1>
+
+        <h2>見積もり内容</h2>
+        <div class="quote-details">
+            <p><strong>保険名:</strong> <span th:text="${quoteForm.insuranceName}"></span></p>
+            <p><strong>保険内容:</strong> <span th:text="${quoteForm.insuranceContent}"></span></p>
+            <p><strong>月々金額:</strong> <span th:text="${#numbers.formatInteger(quoteForm.monthlyPremium, 1, 'COMMA')} + '円'"></span></p>
+            <p><strong>給付金/返金金額:</strong> <span th:text="${quoteForm.benefitAmount}"></span></p>
+            <!-- がん保険の場合のみ表示 -->
+            <p th:if="${quoteForm.paymentFrequency != null and quoteForm.paymentFrequency != ''}">
+                <strong>支払い回数:</strong> <span th:text="${quoteForm.paymentFrequency} + '回'"></span>
+            </p>
+            <!-- 医療保険の場合のみ表示 -->
+            <p th:if="${quoteForm.dailyHospitalizationBenefit != null and quoteForm.dailyHospitalizationBenefit != ''}">
+                <strong>1日につき入院費:</strong> <span th:text="${quoteForm.dailyHospitalizationBenefit}"></span>
+            </p>
+            <p th:if="${quoteForm.paymentDays != null and quoteForm.paymentDays != ''}">
+                <strong>支払い日数:</strong> <span th:text="${quoteForm.paymentDays}"></span>
+            </p>
+        </div>
+
+        <h2>顧客情報入力</h2>
+        <form th:action="@{/quote/register}" th:object="${quoteForm}" method="post" class="customer-form">
+            <div class="form-group">
+                <label for="lastName">姓:</label>
+                <input type="text" id="lastName" th:field="*{lastName}" required>
+                <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="error-message"></span>
+            </div>
+            <div class="form-group">
+                <label for="firstName">名:</label>
+                <input type="text" id="firstName" th:field="*{firstName}" required>
+                <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="error-message"></span>
+            </div>
+            <div class="form-group">
+                <label for="dateOfBirth">生年月日:</label>
+                <input type="date" id="dateOfBirth" th:field="*{dateOfBirth}" required>
+                <span th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}" class="error-message"></span>
+            </div>
+            <div class="form-group">
+                <label for="phoneNumber">電話番号:</label>
+                <input type="text" id="phoneNumber" th:field="*{phoneNumber}" placeholder="ハイフンなしで入力してください" required>
+                <span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="error-message"></span>
+            </div>
+            <div class="form-group">
+                <label for="email">メールアドレス:</label>
+                <input type="email" id="email" th:field="*{email}" required>
+                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></span>
+            </div>
+
+            <div class="button-group">
+                <button type="submit">結果を登録</button>
+                <a th:href="@{/quote}" class="edit-button">編集</a>
+                <a th:href="@{/home}" class="home-button">ホームに戻る</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
