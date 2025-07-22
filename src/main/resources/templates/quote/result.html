@@ -85,22 +85,32 @@
             <p><strong>保険内容:</strong> <span th:text="${quoteForm.insuranceContent}"></span></p>
             <p><strong>月々金額:</strong> <span th:text="${#numbers.formatInteger(quoteForm.monthlyPremium, 1, 'COMMA')} + '円'"></span></p>
             <p><strong>給付金/返金金額:</strong> <span th:text="${quoteForm.benefitAmount}"></span></p>
-            <!-- がん保険の場合のみ表示 -->
-            <p th:if="${quoteForm.paymentFrequency != null and quoteForm.paymentFrequency != ''}">
-                <strong>支払い回数:</strong> <span th:text="${quoteForm.paymentFrequency} + '回'"></span>
+
+            <div th:if="${quoteForm.numberOfPayments != null}">
+                <p><strong>支払い回数:</strong> <span th:text="${quoteForm.numberOfPayments}"></span>回</p>
+            </div>
+            <p th:if="${quoteForm.dailyHospitalizationFee != null}">
+                <strong>1日につき入院費:</strong> <span th:text="${quoteForm.dailyHospitalizationFee}"></span>
             </p>
-            <!-- 医療保険の場合のみ表示 -->
-            <p th:if="${quoteForm.dailyHospitalizationBenefit != null and quoteForm.dailyHospitalizationBenefit != ''}">
-                <strong>1日につき入院費:</strong> <span th:text="${quoteForm.dailyHospitalizationBenefit}"></span>
-            </p>
-            <p th:if="${quoteForm.paymentDays != null and quoteForm.paymentDays != ''}">
+            <p th:if="${quoteForm.paymentDays != null}">
                 <strong>支払い日数:</strong> <span th:text="${quoteForm.paymentDays}"></span>
+            </p>
+            <p th:if="${quoteForm.surrenderValue != null}">
+                <strong>解約返戻金:</strong> <span th:text="${#numbers.formatInteger(quoteForm.surrenderValue, 1, 'COMMA')} + '円'"></span>
             </p>
         </div>
 
         <h2>顧客情報入力</h2>
         <form th:action="@{/quote/register}" th:object="${quoteForm}" method="post" class="customer-form">
-            <div class="form-group">
+            <input type="hidden" th:field="*{age}" />
+            <input type="hidden" th:field="*{gender}" />
+            <input type="hidden" th:field="*{productId}" />
+            <input type="hidden" th:field="*{insuranceName}" />
+            <input type="hidden" th:field="*{insuranceContent}" />
+            <input type="hidden" th:field="*{monthlyPremium}" />
+            <input type="hidden" th:field="*{benefitAmount}" />
+            <input type="hidden" th:field="*{numberOfPayments}" /> <input type="hidden" th:field="*{dailyHospitalizationFee}" /> <input type="hidden" th:field="*{paymentDays}" />
+            <input type="hidden" th:field="*{surrenderValue}" /> <div class="form-group">
                 <label for="lastName">姓:</label>
                 <input type="text" id="lastName" th:field="*{lastName}" required>
                 <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="error-message"></span>

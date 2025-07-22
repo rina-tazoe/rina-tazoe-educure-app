@@ -14,18 +14,17 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import lombok.Data; // Lombokを使用している場合
+import lombok.Data;
 
 @Entity
-@Table(name = "cancer_insurance_details") // DBのテーブル名に合わせて
-@Data // Lombokのアノテーションでgetter/setterなどを自動生成
-@EntityListeners(AuditingEntityListener.class) // 作成日時・更新日時自動設定用
+@Table(name = "cancer_insurance_details")
+@Data
+@EntityListeners(AuditingEntityListener.class)
 public class CancerInsuranceDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cancer_insurance_detail_id") // DBのカラム名に合わせる
-    private Long cancerInsuranceDetailId; // フィールド名をDBのカラム名と合わせるか、@Columnでマッピング
+    private Long cancerInsuranceDetailId; // IDフィールド名はプロジェクトに合わせて調整してください
 
     @Column(name = "product_id", nullable = false)
     private Long productId;
@@ -36,33 +35,23 @@ public class CancerInsuranceDetail {
     @Column(name = "max_age", nullable = false)
     private Integer maxAge;
 
-    @Column(name = "payment_monthly_male", nullable = false)
+    @Column(name = "premium_male", nullable = false)
     private Integer paymentMonthlyMale;
 
-    @Column(name = "payment_monthly_female", nullable = false)
+    @Column(name = "premium_female", nullable = false)
     private Integer paymentMonthlyFemale;
 
-    @Column(name = "benefit_amount") // data.sqlでVARCHARになっているのでStringに
-    private String benefitAmount;
+    @Column(name = "benefit_amount", nullable = false)
+    private Integer benefitAmount; // ★ここを String から Integer に変更済みであることを確認★
 
-    @Column(name = "payment_frequency") // data.sqlでVARCHARになっているのでStringに
-    private String paymentFrequency;
+    @Column(name = "payment_frequency", nullable = false)
+    private Integer paymentFrequency; // ★ここを String から Integer に変更済みであることを確認★
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    // デフォルトコンストラクタ (JPAが必要とする)
-    public CancerInsuranceDetail() {
-    }
-
-    // Lombokの@Dataアノテーションがあれば、以下のgetter/setterは不要ですが、
-    // 明示的に記述する場合は含めてください。
-    // public Long getCancerInsuranceDetailId() { return cancerInsuranceDetailId; }
-    // public void setCancerInsuranceDetailId(Long cancerInsuranceDetailId) { this.cancerInsuranceDetailId = cancerInsuranceDetailId; }
-    // (他のフィールドも同様)
 }

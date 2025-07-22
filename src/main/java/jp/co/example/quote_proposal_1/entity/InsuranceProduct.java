@@ -4,75 +4,52 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import lombok.Data;
+
 @Entity
 @Table(name = "insurance_products")
+@Data
+@EntityListeners(AuditingEntityListener.class)
 public class InsuranceProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
     private Long productId;
 
-    @Column(name = "product_name", nullable = false)
-    private String productName; // ★★★ この行を追加または修正 ★★★
+    @Column(name = "product_name", nullable = false, length = 100)
+    private String productName; // HTMLの estimate.insuranceProduct?.name に対応
 
-    @Column(name = "product_description")
-    private String productDescription;
+    @Column(name = "product_description", columnDefinition = "TEXT")
+    private String productDescription; // HTMLの estimate.insuranceProduct?.description に対応
 
-    @Column(name = "created_at", nullable = false)
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false)
+    @LastModifiedDate
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // コンストラクタ
     public InsuranceProduct() {
     }
 
-    // --- Getter/Setter ---
-    public Long getProductId() {
-        return productId;
+    // 必要であれば、nameのゲッターを追加してHTMLの.name参照に対応させる
+    public String getName() {
+        return this.productName;
     }
 
-    public void setProductId(Long productId) {
-        this.productId = productId;
-    }
-
-    // ★★★ このgetter/setterを追加または修正 ★★★
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public String getProductDescription() {
-        return productDescription;
-    }
-
-    public void setProductDescription(String productDescription) {
-        this.productDescription = productDescription;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    // 必要であれば、descriptionのゲッターを追加してHTMLの.description参照に対応させる
+    public String getDescription() {
+        return this.productDescription;
     }
 }

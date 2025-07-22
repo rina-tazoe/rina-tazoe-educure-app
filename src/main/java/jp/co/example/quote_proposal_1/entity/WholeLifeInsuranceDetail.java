@@ -14,18 +14,17 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import lombok.Data; // Lombokを使用している場合
+import lombok.Data;
 
 @Entity
-@Table(name = "whole_life_insurance_details") // DBのテーブル名に合わせて
-@Data // Lombokのアノテーションでgetter/setterなどを自動生成
-@EntityListeners(AuditingEntityListener.class) // 作成日時・更新日時自動設定用
+@Table(name = "whole_life_insurance_details")
+@Data
+@EntityListeners(AuditingEntityListener.class)
 public class WholeLifeInsuranceDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "whole_life_insurance_detail_id") // DBのカラム名に合わせる
-    private Long wholeLifeInsuranceDetailId; // フィールド名をDBのカラム名と合わせるか、@Columnでマッピング
+    private Long wholeLifeInsuranceDetailId; // IDフィールド名はプロジェクトに合わせて調整してください
 
     @Column(name = "product_id", nullable = false)
     private Long productId;
@@ -36,30 +35,20 @@ public class WholeLifeInsuranceDetail {
     @Column(name = "max_age", nullable = false)
     private Integer maxAge;
 
-    @Column(name = "payment_monthly_male") // nullable=falseはdata.sqlと合わせる
+    @Column(name = "premium_male", nullable = false)
     private Integer paymentMonthlyMale;
 
-    @Column(name = "payment_monthly_female") // nullable=falseはdata.sqlと合わせる
+    @Column(name = "premium_female", nullable = false)
     private Integer paymentMonthlyFemale;
 
-    @Column(name = "benefit_amount") // data.sqlでVARCHARになっているのでStringに
-    private String benefitAmount;
+    @Column(name = "benefit_amount", nullable = false)
+    private Integer benefitAmount; // ★ここを String から Integer に変更済みであることを確認★
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    // デフォルトコンストラクタ (JPAが必要とする)
-    public WholeLifeInsuranceDetail() {
-    }
-
-    // Lombokの@Dataアノテーションがあれば、以下のgetter/setterは不要ですが、
-    // 明示的に記述する場合は含めてください。
-    // public Long getWholeLifeInsuranceDetailId() { return wholeLifeInsuranceDetailId; }
-    // public void setWholeLifeInsuranceDetailId(Long wholeLifeInsuranceDetailId) { this.wholeLifeInsuranceDetailId = wholeLifeInsuranceDetailId; }
-    // (他のフィールドも同様)
 }

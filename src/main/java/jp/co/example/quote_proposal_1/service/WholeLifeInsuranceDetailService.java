@@ -4,12 +4,14 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import jp.co.example.quote_proposal_1.entity.WholeLifeInsuranceDetail;
-import jp.co.example.quote_proposal_1.repository.WholeLifeInsuranceDetailRepository;
+import jp.co.example.quote_proposal_1.repository.WholeLifeInsuranceDetailRepository; // リポジトリをインポート
 
 @Service
-public class WholeLifeInsuranceDetailService {
+@Transactional(readOnly = true)
+public class WholeLifeInsuranceDetailService { // クラス名を変更 (Detailを付与)
 
     private final WholeLifeInsuranceDetailRepository wholeLifeInsuranceDetailRepository;
 
@@ -18,17 +20,9 @@ public class WholeLifeInsuranceDetailService {
         this.wholeLifeInsuranceDetailRepository = wholeLifeInsuranceDetailRepository;
     }
 
-    /**
-     * 指定された商品IDと年齢グループに合致する終身保険詳細情報を検索します。
-     * @param productId 保険商品ID
-     * @param age 年齢グループ
-     * @return 該当する終身保険詳細情報（Optionalでラップ）
-     */
+    // product_id と年齢範囲に基づいて終身保険の詳細を取得
     public Optional<WholeLifeInsuranceDetail> findByProductIdAndAgeGroup(Long productId, Integer age) {
-        // リポジトリのメソッド名に合わせて修正
-        // ageをminAgeとmaxAgeの両方に渡すことで、ageが範囲内にあるかをチェック
+        // リポジトリのメソッド名と引数に合わせて調整
         return wholeLifeInsuranceDetailRepository.findByProductIdAndMinAgeLessThanEqualAndMaxAgeGreaterThanEqual(productId, age, age);
     }
-
-    // 必要に応じて他のサービスメソッド...
 }

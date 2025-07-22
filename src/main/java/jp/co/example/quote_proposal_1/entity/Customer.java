@@ -1,6 +1,6 @@
 package jp.co.example.quote_proposal_1.entity;
 
-import java.time.LocalDate;       // ★ここが LocalDate になっていることを確認
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -25,46 +25,35 @@ public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_id")
     private Long id;
 
-    @Column(name = "first_name", nullable = false, length = 100)
-    private String firstName;
-
-    @Column(name = "last_name", nullable = false, length = 100)
+    @Column(nullable = false, length = 50)
     private String lastName;
 
-    @Column(name = "email", unique = true, length = 255)
-    private String email;
+    @Column(nullable = false, length = 50)
+    private String firstName;
 
-    @Column(name = "phone_number", length = 20)
+    @Column(nullable = false)
+    private LocalDate dateOfBirth;
+
+    @Column(nullable = false, length = 20)
     private String phoneNumber;
 
-    @Column(name = "date_of_birth", nullable = false)
-    private LocalDate dateOfBirth; // ★ここが LocalDateTime ではなく LocalDate になっていることを確実に確認
+    @Column(nullable = false, unique = true, length = 255)
+    private String email;
 
-    @Column(name = "registered_by", nullable = false)
-    private Long registeredBy;
+    // ★★★ 追加: 登録者IDフィールド ★★★
+    @Column(name = "registered_by", nullable = false) // データベースのカラム名とNOT NULL制約に合わせて
+    private Long registeredBy; // 顧客を登録したユーザーのID
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // デフォルトコンストラクタ (JPAが必要とする)
     public Customer() {
-    }
-
-    // 必要に応じてコンストラクタを更新
-    public Customer(String firstName, String lastName, String email, String phoneNumber, LocalDate dateOfBirth, Long registeredBy) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.dateOfBirth = dateOfBirth;
-        this.registeredBy = registeredBy;
     }
 }

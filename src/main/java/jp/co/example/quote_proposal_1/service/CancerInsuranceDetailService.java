@@ -4,31 +4,25 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import jp.co.example.quote_proposal_1.entity.CancerInsuranceDetail;
-import jp.co.example.quote_proposal_1.repository.CancerInsuranceDetailRepository;
+import jp.co.example.quote_proposal_1.repository.CancerInsuranceRepository; // リポジトリをインポート
 
 @Service
-public class CancerInsuranceDetailService {
+@Transactional(readOnly = true)
+public class CancerInsuranceDetailService { // クラス名を変更 (Detailを付与)
 
-    private final CancerInsuranceDetailRepository cancerInsuranceDetailRepository;
+    private final CancerInsuranceRepository cancerInsuranceRepository;
 
     @Autowired
-    public CancerInsuranceDetailService(CancerInsuranceDetailRepository cancerInsuranceDetailRepository) {
-        this.cancerInsuranceDetailRepository = cancerInsuranceDetailRepository;
+    public CancerInsuranceDetailService(CancerInsuranceRepository cancerInsuranceRepository) {
+        this.cancerInsuranceRepository = cancerInsuranceRepository;
     }
 
-    /**
-     * 指定された商品IDと年齢グループに合致するがん保険詳細情報を検索します。
-     * @param productId 保険商品ID
-     * @param age 年齢グループ
-     * @return 該当するがん保険詳細情報（Optionalでラップ）
-     */
+    // product_id と年齢範囲に基づいてがん保険の詳細を取得
     public Optional<CancerInsuranceDetail> findByProductIdAndAgeGroup(Long productId, Integer age) {
-        // リポジトリのメソッド名に合わせて修正
-        // ageをminAgeとmaxAgeの両方に渡すことで、ageが範囲内にあるかをチェック
-        return cancerInsuranceDetailRepository.findByProductIdAndMinAgeLessThanEqualAndMaxAgeGreaterThanEqual(productId, age, age);
+        // リポジトリのメソッド名と引数に合わせて調整
+        return cancerInsuranceRepository.findByProductIdAndMinAgeLessThanEqualAndMaxAgeGreaterThanEqual(productId, age, age);
     }
-
-    // 必要に応じて他のサービスメソッド...
 }
