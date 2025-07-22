@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>商品カテゴリ選択</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>商品カテゴリ選択</h1>
+        <nav>
+            <ul>
+                <li><a th:href="@{/products/medical}">医療保険</a></li>
+                <li><a th:href="@{/products/cancer}">がん保険</a></li>
+                <li><a th:href="@{/products/wholelife}">終身保険</a></li>
+            </ul>
+        </nav>
+        <p><a href="/home">ホームに戻る</a></p>
+        
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">ログアウト</button>
+        </form>
+    </div>
+</body>
+</html>

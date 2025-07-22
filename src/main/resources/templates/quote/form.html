@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>見積もり画面</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { 
+            background-color: #fff; 
+            padding: 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* ★ここを修正しました★ */
+            width: 600px; 
+            max-width: 90%; 
+            text-align: center; 
+        }
+        h1 { color: #333; margin-bottom: 20px; }
+        form { text-align: left; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        select, input[type="number"], input[type="text"], input[type="date"], input[type="email"] {
+            width: calc(100% - 22px); /* Padding and border */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: block;
+        }
+        .button-group {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .home-button {
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .home-button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>見積もり画面</h1>
+
+        <form th:action="@{/quote/calculate}" th:object="${quoteForm}" method="post">
+            <div class="form-group">
+                <label for="age">年齢:</label>
+                <select id="age" th:field="*{age}" required>
+                    <option value="">選択してください</option>
+                    <option th:each="i : ${#numbers.sequence(0, 7)}" th:value="${i * 10}" th:text="${i * 10} + '歳～' + (${i * 10} + 9) + '歳'"></option>
+                </select>
+                <span th:if="${#fields.hasErrors('age')}" th:errors="*{age}" class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="gender">性別:</label>
+                <select id="gender" th:field="*{gender}" required>
+                    <option value="">選択してください</option>
+                    <option value="男性">男性</option>
+                    <option value="女性">女性</option>
+                </select>
+                <span th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}" class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="productId">保険商品:</label>
+                <select id="productId" th:field="*{productId}" required>
+                    <option value="">選択してください</option>
+                    <option th:each="product : ${products}" th:value="${product.productId}" th:text="${product.productName}"></option>
+                </select>
+                <span th:if="${#fields.hasErrors('productId')}" th:errors="*{productId}" class="error-message"></span>
+            </div>
+
+            <div class="button-group">
+                <button type="submit">見積もり</button>
+                <a th:href="@{/home}" class="home-button">ホームに戻る</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
