@@ -53,12 +53,20 @@
         <tbody>
             <tr th:each="estimate : ${estimates}">
                 <td th:text="${estimate.id}"></td>
-                <td th:text="${estimate.product.productName}"></td>
-                <td th:text="${estimate.monthlyPremium}"></td>
-                <td th:text="${estimate.amount}"></td>
-                <td th:text="${#temporals.format(estimate.estimateDate, 'yyyy/MM/dd HH:mm')}"></td>
+                <td th:text="${estimate.insuranceProduct.productName}"></td>
+                <td th:text="${#numbers.formatDecimal(estimate.monthlyPremium, 0, 'COMMA', 0, 'POINT')}"></td>
                 <td>
-                    <!-- ★★★ 修正箇所: th:action のパスをコントローラーに合わせる ★★★ -->
+                    <span th:if="${estimate.insuranceProduct.productId == 3L}">
+                        <span th:text="${#numbers.formatDecimal(estimate.dailyHospitalizationFee, 0, 'COMMA', 0, 'POINT')}"></span>
+                    </span>
+                    <span th:if="${estimate.insuranceProduct.productId == 1L or estimate.insuranceProduct.productId == 2L}">
+                        <span th:text="${#numbers.formatDecimal(estimate.benefitAmount, 0, 'COMMA', 0, 'POINT')}"></span>
+                    </span>
+                    <span th:if="${estimate.benefitAmount == null and estimate.dailyHospitalizationFee == null}">
+                        - </span>
+                </td>
+                <td th:text="${#temporals.format(estimate.estimateDate, 'yyyy/MM/dd')}"></td>
+                <td>
                     <form th:action="@{/customers/{customerId}/estimates/{estimateId}/delete(customerId=${customer.id}, estimateId=${estimate.id})}" method="post" class="delete-form">
                         <button type="submit" class="btn btn-danger"
                                 onclick="return confirm('本当にこの見積もりを削除しますか？');">削除</button>
