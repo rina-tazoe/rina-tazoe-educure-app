@@ -18,11 +18,11 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import lombok.Data;
+import lombok.Data; // Lombok を使用している場合
 
 @Entity
 @Table(name = "estimates")
-@Data
+@Data // Lombok を使用している場合、getter/setter/toStringなどが自動生成されます
 @EntityListeners(AuditingEntityListener.class)
 public class Estimate {
 
@@ -38,11 +38,9 @@ public class Estimate {
     @JoinColumn(name = "created_by_user_id", nullable = false)
     private User createdBy;
 
-    // ★★★ ここから追加するフィールド ★★★
-
     @ManyToOne // 保険商品との多対一リレーション
     @JoinColumn(name = "product_id", nullable = false) // データベースの外部キーカラム名
-    private InsuranceProduct product; // 選択された保険商品
+    private InsuranceProduct product; // ★ここが "product" です
 
     @Column(name = "age", nullable = false)
     private Integer age; // 顧客の年齢（見積もり時点）
@@ -58,9 +56,7 @@ public class Estimate {
 
     @Column(name = "estimate_date", nullable = false)
     private LocalDate estimateDate; // 見積もり日
-    // ★★★ ここまで追加するフィールド ★★★
 
-    // 既存のフィールド
     @Column(name = "amount", nullable = false)
     private Integer amount; // (Note: monthlyPremiumと重複する可能性あり。どちらか一方に統一を検討)
 
@@ -97,5 +93,121 @@ public class Estimate {
         this.amount = amount;
         this.status = status;
         this.description = description;
+    }
+
+    // Lombok の @Data アノテーションがあれば、以下の getter/setter は自動生成されますが、
+    // 明示的に記述する場合は以下のようになります。
+
+    // GetterとSetter
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public InsuranceProduct getProduct() { // ★ Getterも getProduct() です
+        return product;
+    }
+
+    public void setProduct(InsuranceProduct product) { // ★ Setterも setProduct() です
+        this.product = product;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public BigDecimal getMonthlyPremium() {
+        return monthlyPremium;
+    }
+
+    public void setMonthlyPremium(BigDecimal monthlyPremium) {
+        this.monthlyPremium = monthlyPremium;
+    }
+
+    public BigDecimal getSurrenderValue() {
+        return surrenderValue;
+    }
+
+    public void setSurrenderValue(BigDecimal surrenderValue) {
+        this.surrenderValue = surrenderValue;
+    }
+
+    public LocalDate getEstimateDate() {
+        return estimateDate;
+    }
+
+    public void setEstimateDate(LocalDate estimateDate) {
+        this.estimateDate = estimateDate;
+    }
+
+    public Integer getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Integer amount) {
+        this.amount = amount;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

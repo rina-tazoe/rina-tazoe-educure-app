@@ -7,11 +7,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import lombok.AllArgsConstructor; // コンストラクタの競合を避けるため追加
 import lombok.Data; // Lombokを使用する場合
+import lombok.NoArgsConstructor; // コンストラクタの競合を避けるため追加
 
 @Entity
 @Table(name = "roles") // データベースのテーブル名に合わせる
 @Data // Lombokのアノテーション: Getter, Setter など自動生成
+@NoArgsConstructor // 引数なしコンストラクタを自動生成
+@AllArgsConstructor // 全てのフィールドを引数に持つコンストラクタを自動生成
 public class Role {
 
     @Id

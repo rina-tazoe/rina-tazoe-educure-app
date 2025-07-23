@@ -5,14 +5,24 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jp.co.example.quote_proposal_1.entity.Customer;
 import jp.co.example.quote_proposal_1.entity.InsuranceProduct;
 import jp.co.example.quote_proposal_1.entity.Quote;
+import jp.co.example.quote_proposal_1.entity.User;
 import jp.co.example.quote_proposal_1.form.QuoteForm;
 import jp.co.example.quote_proposal_1.repository.QuoteRepository;
+import jp.co.example.quote_proposal_1.repository.UserRepository;
+
+// 不要なインポートを削除 (MedicalInsuranceDetailServiceなどはQuoteServiceImplでは直接使用しないため)
+// import jp.co.example.quote_proposal_1.service.MedicalInsuranceDetailService;
+// import jp.co.example.quote_proposal_1.service.CancerInsuranceDetailService;
+// import jp.co.example.quote_proposal_1.service.WholeLifeInsuranceDetailService;
 
 @Service
 @Transactional
@@ -27,14 +37,16 @@ public class QuoteServiceImpl implements QuoteService {
     @Autowired
     private InsuranceProductService insuranceProductService;
 
-    @Autowired
-    private MedicalInsuranceDetailService medicalInsuranceDetailService;
+    // 不要なサービスは削除
+    // @Autowired
+    // private MedicalInsuranceDetailService medicalInsuranceDetailService;
+    // @Autowired
+    // private CancerInsuranceDetailService cancerInsuranceDetailService;
+    // @Autowired
+    // private WholeLifeInsuranceDetailService wholeLifeInsuranceDetailService;
 
     @Autowired
-    private CancerInsuranceDetailService cancerInsuranceDetailService;
-
-    @Autowired
-    private WholeLifeInsuranceDetailService wholeLifeInsuranceDetailService;
+    private UserRepository userRepository;
 
     @Override
     public int calculatePremium(QuoteForm quoteForm) {
@@ -43,7 +55,7 @@ public class QuoteServiceImpl implements QuoteService {
     }
 
     @Override
-    public Quote registerQuote(QuoteForm quoteForm) { // ★★★ 引数をQuoteFormのみに変更 ★★★
+    public Quote registerQuote(QuoteForm quoteForm) {
         System.out.println("DEBUG: registerQuote method called for QuoteForm: " + quoteForm);
 
         // 顧客情報の登録または取得
@@ -52,7 +64,14 @@ public class QuoteServiceImpl implements QuoteService {
 
         if (existingCustomer.isPresent()) {
             customer = existingCustomer.get();
-            System.out.println("DEBUG: 既存の顧客が見つかりました。ID: " + customer.getId());
+            // 既存顧客が見つかった場合、最新の情報で更新
+            customer.setLastName(quoteForm.getLastName());
+            customer.setFirstName(quoteForm.getFirstName());
+            customer.setDateOfBirth(quoteForm.getDateOfBirth());
+            customer.setPhoneNumber(quoteForm.getPhoneNumber());
+            // emailは検索キーなので更新不要
+            customer = customerService.saveCustomer(customer); // 更新を保存
+            System.out.println("DEBUG: 既存の顧客情報を更新しました。ID: " + customer.getId() + ", Email: " + customer.getEmail());
         } else {
             customer = new Customer();
             customer.setLastName(quoteForm.getLastName());
@@ -60,45 +79,72 @@ public class QuoteServiceImpl implements QuoteService {
             customer.setDateOfBirth(quoteForm.getDateOfBirth());
             customer.setPhoneNumber(quoteForm.getPhoneNumber());
             customer.setEmail(quoteForm.getEmail());
-            // registeredByはCustomerServiceで設定される想定
-            customer = customerService.saveCustomer(customer);
-            System.out.println("DEBUG: 新規顧客を登録しました。ID: " + customer.getId());
+            customer = customerService.saveCustomer(customer); // 新規顧客を保存
+            System.out.println("DEBUG: 新規顧客を登録しました。ID: " + customer.getId() + ", Email: " + customer.getEmail());
         }
 
         // 保険商品エンティティの取得
         InsuranceProduct selectedProduct = insuranceProductService.findById(quoteForm.getProductId())
                 .orElseThrow(() -> new RuntimeException("選択された保険商品が見つかりませんでした。ID: " + quoteForm.getProductId()));
 
-
         // Quoteエンティティの作成と設定
         Quote quote = new Quote();
-        quote.setInsuranceProduct(selectedProduct); // InsuranceProductオブジェクトを設定
-        quote.setCustomer(customer);
+        quote.setInsuranceProduct(selectedProduct);
+        quote.setCustomer(customer); // 更新または新規登録された顧客をセット
         quote.setAge(quoteForm.getAge());
         quote.setGender(quoteForm.getGender());
 
         // QuoteFormから月々金額を直接設定 (Controllerで既に計算済み)
-        quote.setMonthlyPremium(quoteForm.getMonthlyPremium() != null ? quoteForm.getMonthlyPremium().doubleValue() : 0.0);
-        quote.setBenefit(quoteForm.getInsuranceContent()); // 汎用的な保険内容
+        // ★★★ 修正箇所: QuoteFormのBigDecimal値をそのままQuoteのBigDecimalフィールドに設定 ★★★
+        quote.setMonthlyPremium(quoteForm.getMonthlyPremium());
+        quote.setBenefit(quoteForm.getInsuranceContent());
 
-        // ★★★ QuoteFormから各保険タイプ固有のフィールドを直接設定 ★★★
-        // QuoteFormがInteger/Double型で持つように変更したため、直接コピーできる
+        // QuoteFormから各保険タイプ固有のフィールドを直接設定
+        // ★★★ 修正箇所: QuoteFormのBigDecimal値をそのままQuoteのBigDecimalフィールドに設定 ★★★
         quote.setDailyHospitalizationFee(quoteForm.getDailyHospitalizationFee());
-        quote.setPaymentDays(quoteForm.getPaymentDays());
+        quote.setPaymentDays(quoteForm.getPaymentDays()); // Integerのまま
         quote.setBenefitAmount(quoteForm.getBenefitAmount());
-        quote.setNumberOfPayments(quoteForm.getNumberOfPayments());
+        quote.setNumberOfPayments(quoteForm.getNumberOfPayments()); // Integerのまま
         quote.setSurrenderValue(quoteForm.getSurrenderValue());
-
 
         quote.setEstimateDate(LocalDate.now());
         quote.setStatus("見積もり済み");
-        quote.setCreatedByUserId(1L); // 仮の値 (実際にはログインユーザーIDなどを使用)
-        quote.setAmount(0); // 仮の値 (必要に応じてQuoteFormから取得)
+
+        Long currentUserId = null;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails userDetails) {
+                String username = userDetails.getUsername();
+                Optional<User> user = userRepository.findByUsername(username);
+                if (user.isPresent()) {
+                    currentUserId = user.get().getId();
+                } else {
+                    System.err.println("ERROR: User not found in DB for username: " + username + " during quote creation.");
+                }
+            }
+        }
+        
+        if (currentUserId != null) {
+            quote.setCreatedByUserId(currentUserId);
+        } else {
+            System.err.println("WARN: Could not get authenticated user ID for quote creation. Setting CreatedByUserId to null.");
+            quote.setCreatedByUserId(null);
+        }
+
+        // amount フィールドの扱い: monthlyPremium と重複する可能性について考慮が必要
+        // もし amount が月払い保険料と同じ意味なら、 monthlyPremium を amount に設定するか、
+        // amount フィールド自体を削除して monthlyPremium に統一することを検討してください。
+        // ここでは便宜的に monthlyPremium を amount に設定しておきます。
+        if (quote.getAmount() == null && quote.getMonthlyPremium() != null) {
+             quote.setAmount(quote.getMonthlyPremium().intValue()); // BigDecimalからintへの変換は精度に注意
+        }
 
         return quoteRepository.save(quote);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Quote> findById(Long id) {
         return quoteRepository.findById(id);
     }

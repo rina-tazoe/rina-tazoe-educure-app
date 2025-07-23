@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>顧客見積もり一覧</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        /* 簡単なスタイルを追加 */
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1, h2, h3 { color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .button-group { margin-top: 20px; }
+        .btn {
+            display: inline-block;
+            padding: 8px 15px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .btn-danger { background-color: #dc3545; } /* 削除ボタンのスタイル */
+        .btn:hover { background-color: #0056b3; }
+        .btn-danger:hover { background-color: #c82333; }
+        .delete-form { display: inline; } /* フォームをインライン表示 */
+    </style>
+</head>
+<body>
+    <h1>顧客見積もり一覧</h1>
+
+    <div th:if="${customer}">
+        <h2>顧客情報: <span th:text="${customer.lastName}"></span> <span th:text="${customer.firstName}"></span></h2>
+        <p>メールアドレス: <span th:text="${customer.email}"></span></p>
+        <p>電話番号: <span th:text="${customer.phoneNumber}"></span></p>
+        <p>生年月日: <span th:text="${#temporals.format(customer.dateOfBirth, 'yyyy年MM月dd日')}"></span></p>
+    </div>
+
+    <h3>見積もり履歴</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>見積もりID</th>
+                <th>保険名</th>
+                <th>月々保険料</th>
+                <th>保険金額/給付金額</th>
+                <th>見積もり日</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="estimate : ${estimates}">
+                <td th:text="${estimate.id}"></td>
+                <td th:text="${estimate.product.productName}"></td>
+                <td th:text="${estimate.monthlyPremium}"></td>
+                <td th:text="${estimate.amount}"></td>
+                <td th:text="${#temporals.format(estimate.estimateDate, 'yyyy/MM/dd HH:mm')}"></td>
+                <td>
+                    <!-- ★★★ 修正箇所: th:action のパスをコントローラーに合わせる ★★★ -->
+                    <form th:action="@{/customers/{customerId}/estimates/{estimateId}/delete(customerId=${customer.id}, estimateId=${estimate.id})}" method="post" class="delete-form">
+                        <button type="submit" class="btn btn-danger"
+                                onclick="return confirm('本当にこの見積もりを削除しますか？');">削除</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${estimates.isEmpty()}">
+                <td colspan="6">この顧客には見積もり履歴がありません。</td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <a th:href="@{/customers}" class="btn">顧客一覧に戻る</a>
+</body>
+</html>

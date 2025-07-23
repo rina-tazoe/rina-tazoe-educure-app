@@ -4,57 +4,53 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-
-// 日時自動更新のためのアノテーション
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import lombok.Data;
 
-@Entity // このクラスがJPAエンティティであることを示す
-@Table(name = "users") // データベースのテーブル名を指定
-@Data // Lombokのアノテーション: Getter, Setter, toString, equals, hashCode を自動生成
-@EntityListeners(AuditingEntityListener.class) // @CreatedDate, @LastModifiedDate を有効にする
+@Data
+@Entity
+@Table(name = "users") // テーブル名がusersであることを明示
 public class User {
 
-    @Id // プライマリキーを示す
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // データベースのIDENTITY列 (例: PostgreSQLのSERIAL) にマッピング
-    @Column(name = "user_id") // DBカラム名を明示的に指定
-    private Long id; // ユーザーID
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // ★★★ 修正: ID生成戦略をIDENTITYに設定 ★★★
+    @Column(name = "user_id") // DBのカラム名がuser_idであることを明示
+    private Long id;
 
-    @Column(name = "username", nullable = false, unique = true, length = 50) // ユーザー名、NULL不可、ユニーク、最大長50
+    @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(name = "password", nullable = false, length = 255) // パスワード（ハッシュ化されるため長め）
+    @Column(nullable = false)
     private String password;
 
-    // ★★★ ここから追加 ★★★
-    @Column(name = "role_id", nullable = false) // ロールIDカラム
-    private Long roleId; // ユーザーのロールID
-    // ★★★ ここまで追加 ★★★
+    @ManyToOne(fetch = FetchType.EAGER) // Roleエンティティへの関連付け
+    @JoinColumn(name = "role_id", nullable = false) // userテーブルのrole_idカラムと紐付け
+    private Role role; // Roleオブジェクトを持つ
 
-    @CreatedDate // エンティティが最初に永続化されるときに自動的に現在日時を設定
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @LastModifiedDate // エンティティが更新されるたびに自動的に現在日時を設定
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    // デフォルトコンストラクタ (JPAが必要とする)
-    public User() {
+    // PrePersistとPreUpdateは引き続き必要
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
-    // 必要に応じて、初期値を設定するためのコンストラクタを更新
-    public User(String username, String password, Long roleId) { // roleIdを追加
-        this.username = username;
-        this.password = password;
-        this.roleId = roleId; // roleIdを設定
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 }

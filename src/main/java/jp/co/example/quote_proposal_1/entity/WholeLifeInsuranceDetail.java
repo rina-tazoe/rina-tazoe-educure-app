@@ -35,14 +35,16 @@ public class WholeLifeInsuranceDetail {
     @Column(name = "max_age", nullable = false)
     private Integer maxAge;
 
-    @Column(name = "premium_male", nullable = false)
+    // ★★★ 修正箇所: カラム名を "payment_monthly_male" に変更 ★★★
+    @Column(name = "payment_monthly_male", nullable = false)
     private Integer paymentMonthlyMale;
 
-    @Column(name = "premium_female", nullable = false)
+    // ★★★ 修正箇所: カラム名を "payment_monthly_female" に変更 ★★★
+    @Column(name = "payment_monthly_female", nullable = false)
     private Integer paymentMonthlyFemale;
 
     @Column(name = "benefit_amount", nullable = false)
-    private Integer benefitAmount; // ★ここを String から Integer に変更済みであることを確認★
+    private Integer benefitAmount;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)

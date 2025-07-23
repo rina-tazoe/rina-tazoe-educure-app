@@ -28,17 +28,15 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("ユーザーが見つかりません: " + username));
 
-        // ユーザーの権限（ロール）を設定
-        // データベースのrolesテーブルのidとnameの対応に合わせて修正
-        String roleName;
-        if (user.getRoleId() == 1L) { // rolesテーブルでid=1がROLE_USER
-            roleName = "ROLE_USER"; // user.getRoleId()が1LならROLE_USER
-        } else if (user.getRoleId() == 2L) { // rolesテーブルでid=2がROLE_ADMIN
-            roleName = "ROLE_ADMIN"; // user.getRoleId()が2LならROLE_ADMIN
-        } else {
-            // 未知のロールIDの場合のデフォルトやエラーハンドリング
-            roleName = "ROLE_UNKNOWN"; // または例外をスロー
-        }
+        // ★★★ 修正箇所: user.getRole().getName() を使用してロール名を取得 ★★★
+        // Userエンティティのroleフィールド（Role型）から、そのnameプロパティにアクセスします。
+        // Userエンティティのroleフィールドは@ManyToOneでnullable=falseなので、nullチェックは不要です。
+        String roleName = user.getRole().getName();
+
+        // Spring Securityのロール名には通常 "ROLE_" プレフィックスが付与されていることを確認
+        // もしデータベースのroles.nameが "ADMIN" や "USER" の場合、ここで "ROLE_" を付与する必要があります。
+        // data.sqlで "ROLE_ADMIN", "ROLE_USER" と挿入しているので、そのまま使用します。
+
         Set<GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority(roleName));
 
         // Spring SecurityのUserオブジェクトを構築して返す

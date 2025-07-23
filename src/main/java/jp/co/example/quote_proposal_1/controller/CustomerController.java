@@ -1,86 +1,85 @@
 package jp.co.example.quote_proposal_1.controller;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Optional; // Optional を使用するため追加
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping; // ★追加: @PostMapping を使用するため
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes; // ★追加: リダイレクト時のメッセージに使用するため
 
 import jp.co.example.quote_proposal_1.entity.Customer;
-import jp.co.example.quote_proposal_1.entity.Quote; // ★修正: Estimate -> Quote ★
+import jp.co.example.quote_proposal_1.entity.Estimate;
 import jp.co.example.quote_proposal_1.service.CustomerService;
-import jp.co.example.quote_proposal_1.service.QuoteService; // ★修正: EstimateService -> QuoteService ★
+import jp.co.example.quote_proposal_1.service.EstimateService;
 
 @Controller
 @RequestMapping("/customers")
 public class CustomerController {
 
-    private final CustomerService customerService;
-    private final QuoteService quoteService; // ★修正: estimateService -> quoteService ★
+    @Autowired
+    private CustomerService customerService;
 
     @Autowired
-    public CustomerController(CustomerService customerService, QuoteService quoteService) { // ★修正: EstimateService -> QuoteService ★
-        this.customerService = customerService;
-        this.quoteService = quoteService; // ★修正: estimateService -> quoteService ★
-    }
+    private EstimateService estimateService;
 
-    // ⑧ 顧客一覧画面の表示
     @GetMapping
-    public String showCustomerList(Model model) {
-        // ★修正: findAllCustomers() -> findAll() ★
-        List<Customer> customers = customerService.findAll();
+    public String listCustomers(Model model) {
+        List<Customer> customers = customerService.findAllCustomers();
         model.addAttribute("customers", customers);
-        return "customers/list"; // src/main/resources/templates/customers/list.html を表示
+        return "customers/list";
     }
 
-    // 顧客詳細（実際は登録済みの見積もり結果画面⑥へ遷移）
-    // 顧客の最新の見積もりを取得してリダイレクトする例
-    @GetMapping("/{id}")
-    public String showCustomerDetail(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        // ★修正: findCustomerById(id) -> findById(id) ★
-        Optional<Customer> customerOpt = customerService.findById(id);
-        if (customerOpt.isPresent()) {
-            // 顧客に関連する最新の見積もりを取得
-            // ここはビジネスロジックにより変わりますが、例として最新の見積もりを取得
-            // ★修正: findLatestEstimateByCustomerId -> findLatestQuoteByCustomerId ★
-            Optional<Quote> latestQuote = quoteService.findLatestQuoteByCustomerId(id);
-            if (latestQuote.isPresent()) {
-                // ★修正: /estimates/ -> /quote/ ★
-                return "redirect:/quote/detail/" + latestQuote.get().getId(); // ⑥の見積もり詳細へリダイレクト
-            } else {
-                redirectAttributes.addFlashAttribute("error", "この顧客には登録された見積もりが見つかりません。");
-                return "redirect:/customers"; // 見積もりがない場合は顧客一覧に戻るなど
-            }
-        } else {
-            redirectAttributes.addFlashAttribute("error", "指定された顧客が見つかりません。");
-            return "redirect:/customers";
+    @GetMapping("/{customerId}/estimates")
+    public String showCustomerEstimates(@PathVariable("customerId") Long customerId, Model model) {
+        // CustomerService の findById を使用する場合（Optionalを返す）
+        Optional<Customer> customerOptional = customerService.findById(customerId);
+        if (customerOptional.isEmpty()) {
+            return "redirect:/error"; // 顧客が見つからない場合、エラーページなどにリダイレクト
         }
+        Customer customer = customerOptional.get();
+
+        // または、CustomerService に `Customer findCustomerById(Long id)` がある場合
+        // Customer customer = customerService.findCustomerById(customerId);
+        // if (customer == null) {
+        //     return "redirect:/error";
+        // }
+
+        List<Estimate> estimates = estimateService.findEstimatesByCustomerId(customerId);
+
+        model.addAttribute("customer", customer);
+        model.addAttribute("estimates", estimates);
+
+        // リダイレクト属性にメッセージがあればモデルに追加 (削除成功/失敗メッセージ表示用)
+        if (model.containsAttribute("message")) {
+            model.addAttribute("message", model.getAttribute("message"));
+        }
+        if (model.containsAttribute("error")) {
+            model.addAttribute("error", model.getAttribute("error"));
+        }
+
+        return "customers/estimates";
     }
 
-    // 顧客編集（実際は見積もり編集画面⑦へ遷移）
-    // 顧客の最新の見積もりを取得してリダイレクトする例
-    @GetMapping("/{id}/edit")
-    public String editCustomer(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        // ★修正: findCustomerById(id) -> findById(id) ★
-        Optional<Customer> customerOpt = customerService.findById(id);
-        if (customerOpt.isPresent()) {
-            // ★修正: findLatestEstimateByCustomerId -> findLatestQuoteByCustomerId ★
-            Optional<Quote> latestQuote = quoteService.findLatestQuoteByCustomerId(id);
-            if (latestQuote.isPresent()) {
-                // ★修正: /estimates/ -> /quote/ ★
-                return "redirect:/quote/detail/" + latestQuote.get().getId() + "/edit"; // ⑦の見積もり編集へリダイレクト
-            } else {
-                redirectAttributes.addFlashAttribute("error", "この顧客には編集可能な見積もりがありません。");
-                return "redirect:/customers/" + id; // 詳細画面に戻るなど
-            }
-        } else {
-            redirectAttributes.addFlashAttribute("error", "指定された顧客が見つかりません。");
-            return "redirect:/customers";
+    // ★★★ ここから追加するメソッド: 見積もり削除処理 ★★★
+    @PostMapping("/{customerId}/estimates/{estimateId}/delete")
+    public String deleteEstimate(@PathVariable("customerId") Long customerId,
+                                 @PathVariable("estimateId") Long estimateId,
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            estimateService.deleteEstimateById(estimateId);
+            redirectAttributes.addFlashAttribute("message", "見積もりID: " + estimateId + " を削除しました。");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "見積もりの削除に失敗しました。: " + e.getMessage());
+            // エラーログを出力 (開発時デバッグ用)
+            e.printStackTrace();
         }
+        // 削除後、同じ顧客の見積もり一覧ページにリダイレクト
+        return "redirect:/customers/" + customerId + "/estimates";
     }
+    // ★★★ 追加するメソッドはここまで ★★★
 }

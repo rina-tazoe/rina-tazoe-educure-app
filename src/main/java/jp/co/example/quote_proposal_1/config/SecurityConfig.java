@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher; // AntPathRequestMatcher をインポート
+// import org.springframework.security.web.util.matcher.AntPathRequestMatcher; // 不要になったためコメントアウト
 
 import jp.co.example.quote_proposal_1.service.CustomUserDetailsService;
 
@@ -39,28 +39,42 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
-                // GET /quote, POST /quote/calculate, POST /quote/register を許可
+                // 静的リソースや公開ページは誰でもアクセス可能
                 .requestMatchers(
-                    AntPathRequestMatcher.antMatcher("/quote"), // GET /quote
-                    new AntPathRequestMatcher("/quote/calculate", "POST"), // ★★★ 修正 ★★★
-                    new AntPathRequestMatcher("/quote/register", "POST")  // ★★★ 修正 ★★★
+                    "/css/**",
+                    "/js/**",
+                    "/images/**",
+                    "/webjars/**",
+                    "/login",
+                    "/register",
+                    "/home", // homeもpermitAllにしておくのが一般的
+                    "/quote/form",      // GET /quote/form (見積もり入力フォーム)
+                    "/quote/calculate", // POST /quote/calculate (見積もり計算結果)
+                    "/quote/register",  // POST /quote/register (見積もり登録処理)
+                    "/quote/detail/**", // GET /quote/detail/{id} (見積もり詳細画面)
+                    "/quote/completion",// GET /quote/completion (見積もり完了画面)
+                    "/estimates/new",   // 見積もり関連の既存のpermitAllパス
+                    "/estimates",
+                    "/estimates/result"
                 ).permitAll()
-                // 既存の permitAll パスも維持
-                .requestMatchers("/login", "/register", "/estimates/new", "/estimates", "/estimates/result").permitAll()
+                // ユーザー管理関連パスはADMINロールを持つユーザーのみアクセス可能
+                .requestMatchers("/users", "/users/**").hasRole("ADMIN")
+                // 顧客一覧は認証済みユーザーなら誰でもアクセス可能 (ADMINでなくても可)
+                .requestMatchers("/customers", "/customers/**").authenticated()
+                // 上記以外のすべてのリクエストは認証が必要
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/home", true)
-                .permitAll()
+                .loginPage("/login") // ログインページのURL
+                .defaultSuccessUrl("/home", true) // ログイン成功後のデフォルトリダイレクト先
+                .permitAll() // ログインフォームは誰でもアクセス可能
             )
             .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout")
-                .permitAll()
+                .logoutUrl("/logout") // ログアウト処理のURL
+                .logoutSuccessUrl("/login?logout") // ログアウト成功後のリダイレクト先
+                .permitAll() // ログアウト処理は誰でもアクセス可能
             )
-            .csrf(csrf -> csrf.disable());
+            .csrf(csrf -> csrf.disable()); // 開発中はCSRF保護を無効にすることが多いが、本番環境では有効にすべき
 
         return http.build();
     }

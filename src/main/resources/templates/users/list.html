@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ユーザー一覧</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { max-width: 900px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        h1 { text-align: center; color: #333; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: middle; }
+        th { background-color: #f2f2f2; color: #555; font-weight: bold; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .button-group {
+            display: flex;
+            gap: 10px; /* ボタン間の隙間 */
+            margin-top: 20px;
+            justify-content: center;
+        }
+        .button-group a, .button-group button {
+            display: inline-block;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            font-size: 0.9em;
+            border: none;
+            cursor: pointer;
+        }
+        .button-group a.add-new { background-color: #28a745; }
+        .button-group button.delete { background-color: #dc3545; }
+        .button-group a.home { background-color: #6c757d; }
+        .button-group a:hover, .button-group button:hover { opacity: 0.9; }
+        .message-area { margin-bottom: 15px; }
+        .alert { padding: 10px; border-radius: 4px; }
+        .alert-success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+        .alert-danger { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        .no-data { text-align: center; margin-top: 20px; color: #666; font-size: 1.1em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ユーザー一覧</h1>
+
+        <div class="message-area">
+            <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        </div>
+
+        <table th:if="${!users.isEmpty()}">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ユーザー名</th>
+                    <th>役割</th>
+                    <th>作成日</th>
+                    <th>更新日</th>
+                    <th sec:authorize="hasRole('ADMIN')">操作</th> <!-- 管理者のみ操作カラムを表示 -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.username}"></td>
+                    <td th:text="${user.role.name}"></td> <!-- user.role.name でロール名にアクセス -->
+                    <td th:text="${#temporals.format(user.createdAt, 'yyyy年MM月dd日 HH:mm')}"></td>
+                    <td th:text="${#temporals.format(user.updatedAt, 'yyyy年MM月dd日 HH:mm')}"></td>
+                    <td sec:authorize="hasRole('ADMIN')">
+                        <form th:action="@{/users/delete/{id}(id=${user.id})}" method="post" onsubmit="return confirm('本当にこのユーザーを削除しますか？');">
+                            <button type="submit" class="button-group button.delete">削除</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p th:if="${users.isEmpty()}" class="no-data">ユーザーが登録されていません。</p>
+
+        <div class="button-group">
+            <a th:href="@{/users/new}" class="add-new" sec:authorize="hasRole('ADMIN')">新規ユーザー追加</a> <!-- 管理者のみ表示 -->
+            <a th:href="@{/home}" class="home">ホームに戻る</a>
+        </div>
+
+        <form th:action="@{/logout}" method="post" style="margin-top: 20px; text-align: center;">
+            <input type="submit" value="ログアウト" style="padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1em;">
+        </form>
+    </div>
+</body>
+</html>

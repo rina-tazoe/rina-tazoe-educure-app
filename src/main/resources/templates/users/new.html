@@ -1,143 +1,105 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>新規ユーザー登録</title>
+    <title>新規ユーザー画面</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
-        /* ここにこのページ固有のスタイルを追加できます */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            width: 400px;
-            max-width: 90%;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-weight: bold;
-        }
-        input[type="text"],
-        input[type="password"],
-        select {
-            width: 100%;
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); width: 500px; max-width: 90%; text-align: center; }
+        h1 { color: #333; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input[type="text"], input[type="password"], select {
+            width: calc(100% - 22px);
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid #ccc;
             border-radius: 4px;
-            box-sizing: border-box; /* paddingを含めて幅を計算 */
-        }
-        button {
-            width: 100%;
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-        button:hover {
-            background-color: #0056b3;
+            box-sizing: border-box;
+            font-size: 1em;
         }
         .error-message {
             color: red;
-            background-color: #ffe0e0;
-            border: 1px solid red;
-            padding: 8px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-            text-align: center;
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: block;
         }
-        .success-message {
-            color: green;
-            background-color: #e0ffe0;
-            border: 1px solid green;
-            padding: 8px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-            text-align: center;
-        }
-        .links {
-            text-align: center;
+        .button-group {
             margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
         }
-        .links a {
-            color: #007bff;
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        button[type="submit"] {
+            background-color: #28a745;
+            color: white;
+        }
+        button[type="submit"]:hover {
+            background-color: #218838;
+        }
+        .home-button {
+            background-color: #6c757d;
+            color: white;
             text-decoration: none;
-            margin: 0 10px;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-align: center;
         }
-        .links a:hover {
-            text-decoration: underline;
+        .home-button:hover {
+            background-color: #5a6268;
         }
+        .alert { padding: 10px; border-radius: 4px; margin-bottom: 15px; }
+        .alert-danger { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>新規ユーザー登録</h1>
+        <h1>新規ユーザー画面</h1>
 
-        <div th:if="${error}" class="error-message">
-            <p th:text="${error}"></p>
-        </div>
-
-        <div th:if="${message}" class="success-message">
-            <p th:text="${message}"></p>
-        </div>
-
-        <form th:action="@{/users/new}" th:object="${user}" method="post">
-            <div class="form-group">
-                <label for="username">ユーザー名:</label>
-                <input type="text" id="username" th:field="*{username}" required>
-                </div>
-
-            <div class="form-group">
-                <label for="password">パスワード:</label>
-                <input type="password" id="password" th:field="*{password}" required>
-                </div>
-
-            <div class="form-group">
-                <label for="passwordConfirm">パスワード再確認:</label>
-                <input type="password" id="passwordConfirm" name="passwordConfirm" required>
+        <form th:action="@{/users/new}" th:object="${userForm}" method="post">
+            <div th:if="${#fields.hasErrors('global')}" class="alert alert-danger">
+                <p th:each="err : ${#fields.errors('global')}" th:text="${err}"></p>
             </div>
 
             <div class="form-group">
-                <label for="role">ロール:</label>
-                <select id="role" th:field="*{role}" required>
-                    <option value="">ロールを選択してください</option>
-                    <option th:each="roleName : ${roles}" th:value="${roleName}" th:text="${roleName}"></option>
+                <label for="username">ユーザー名:</label>
+                <input type="text" id="username" th:field="*{username}" required>
+                <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error-message"></span>
+            </div>
+            <div class="form-group">
+                <label for="password">パスワード:</label>
+                <input type="password" id="password" th:field="*{password}" required>
+                <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></span>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">パスワード（確認）:</label>
+                <input type="password" id="confirmPassword" th:field="*{confirmPassword}" required>
+                <span th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="error-message"></span>
+            </div>
+            <div class="form-group">
+                <label for="roleId">役割:</label>
+                <select id="roleId" th:field="*{roleId}" required>
+                    <option value="">選択してください</option>
+                    <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"></option>
                 </select>
-                </div>
+                <span th:if="${#fields.hasErrors('roleId')}" th:errors="*{roleId}" class="error-message"></span>
+            </div>
 
-            <button type="submit">追加</button>
+            <div class="button-group">
+                <button type="submit">追加</button>
+                <a th:href="@{/home}" class="home-button">ホームに戻る</a>
+            </div>
         </form>
-
-        <div class="links">
-            <a th:href="@{/users}">ユーザー一覧へ戻る</a>
-            <a th:href="@{/home}">ホームへ戻る</a>
-        </div>
     </div>
 </body>
 </html>

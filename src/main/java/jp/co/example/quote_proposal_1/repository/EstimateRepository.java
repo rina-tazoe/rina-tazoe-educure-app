@@ -3,23 +3,17 @@ package jp.co.example.quote_proposal_1.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import jp.co.example.quote_proposal_1.entity.Estimate;
 
+@Repository
 public interface EstimateRepository extends JpaRepository<Estimate, Long> {
-
-    // 特定の顧客IDに関連する全ての見積もりを検索し、作成日時の新しい順に並べる
-    // `createdAt` が `Estimate` エンティティに正しく定義されていることを前提とする
+    // 顧客IDで見積もりを検索し、作成日時の降順でソート
     List<Estimate> findByCustomerIdOrderByCreatedAtDesc(Long customerId);
 
-    // 必要に応じて、他のカスタムクエリメソッドを追加できます
-
-    // 例: 特定のステータスの見積もりを検索
-    // List<Estimate> findByStatus(String status);
-
-    // 例: 特定の顧客IDとステータスの見積もりを検索
-    // List<Estimate> findByCustomerIdAndStatus(Long customerId, String status);
-
-    // 例: IDで検索し、OptionalでラップしてNotFound時のハンドリングを容易にする
-    // Optional<Estimate> findById(Long id); // JpaRepositoryにデフォルトで含まれている
+    // 追加で必要になった場合 (以前のCustomerServiceでのdeleteAllCustomersのため)
+    // void deleteByCustomerId(Long customerId); // これが必要なら追加してください。
+                                              // ただし今回は単一の見積もり削除なので不要です。
+                                              // JpaRepository#deleteById(ID) で十分です。
 }
