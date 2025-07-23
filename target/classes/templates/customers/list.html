@@ -6,29 +6,36 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
         /* 必要に応じてスタイルを調整してください */
-        .container { max-width: 900px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
-        h1 { text-align: center; color: #333; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { max-width: 900px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        h1 { text-align: center; color: #333; margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: middle; }
+        th { background-color: #f2f2f2; color: #555; font-weight: bold; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .button-group {
+            display: flex;
+            gap: 5px; /* ボタン間の隙間 */
+        }
         .button-group a {
             display: inline-block;
-            padding: 5px 10px;
-            margin-right: 5px;
+            padding: 8px 12px;
             text-decoration: none;
             color: #fff;
             background-color: #007bff;
             border-radius: 4px;
+            transition: background-color 0.3s ease;
+            font-size: 0.9em;
         }
         .button-group a.edit { background-color: #ffc107; color: #212529; }
-        .button-group a:hover { opacity: 0.8; }
+        .button-group a:hover { opacity: 0.9; }
         .message-area { margin-bottom: 15px; }
         .alert { padding: 10px; border-radius: 4px; }
         .alert-success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
         .alert-danger { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
-        .no-data { text-align: center; margin-top: 20px; color: #666; }
+        .no-data { text-align: center; margin-top: 20px; color: #666; font-size: 1.1em; }
         .footer-links { text-align: center; margin-top: 30px; }
-        .footer-links a { margin: 0 10px; text-decoration: none; color: #007bff; }
+        .footer-links a { margin: 0 10px; text-decoration: none; color: #007bff; font-weight: bold; }
         .footer-links a:hover { text-decoration: underline; }
     </style>
 </head>
@@ -41,39 +48,35 @@
             <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
         </div>
 
-        <table th:if="${!customers.isEmpty()}">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>氏名</th>
-                    <th>生年月日</th>
-                    <th>保険登録日</th>
-                    <th>最新見積もり金額</th>
-                    <th>登録者</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="customer : ${customers}">
-                    <td th:text="${customer.id}">1</td>
-                    <td th:text="${customer.lastName} + ' ' + ${customer.firstName}">山田 太郎</td>
-                    <td th:text="${#temporals.format(customer.dateOfBirth, 'yyyy年MM月dd日')}">2000年01月01日</td>
-                    
-                    <td th:text="${#temporals.format(customer.registeredAt, 'yyyy年MM月dd日')}">2024年07月21日</td>
-                    
-                    <td th:if="${customer.latestMonthlyPremium != null}" th:text="${#numbers.formatInteger(customer.latestMonthlyPremium, 1, 'COMMA')} + '円'">12,000円</td>
-                    <td th:unless="${customer.latestMonthlyPremium != null}">-</td>
-
-                    <td th:text="${customer.registeredUserName}">登録ユーザー名</td> 
-                    
-                    <td>
-                        <div class="button-group">
-                            <a th:href="@{'/customers/' + ${customer.id} + '/estimates'}">詳細</a>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+		<table th:if="${!customers.isEmpty()}">
+		    <thead>
+		        <tr>
+		            <th>ID</th>
+		            <th>氏名</th>
+		            <th>生年月日</th>
+		            <th>保険登録日</th>
+		            <th>登録者</th>
+		            <th>操作</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		        <tr th:each="customer : ${customers}">
+		            <td th:text="${customer.id}">1</td>
+		            <td th:text="${customer.lastName} + ' ' + ${customer.firstName}">〇〇〇〇</td>
+		            <td th:text="${#temporals.format(customer.dateOfBirth, 'yyyy年MM月dd日')}">2000年01月01日</td>
+		            
+		            <td th:text="${#temporals.format(customer.createdAt, 'yyyy年MM月dd日')}"></td>
+		            
+		            <td th:text="${customer.registeredUser.username}">登録ユーザー名</td> 
+		            
+		            <td>
+		                <div class="button-group">
+		                    <a th:href="@{'/customers/' + ${customer.id} + '/estimates'}">詳細</a>
+		                </div>
+		            </td>
+		        </tr>
+		    </tbody>
+		</table>
         
         <p th:if="${customers.isEmpty()}" class="no-data">顧客が登録されていません。</p>
 

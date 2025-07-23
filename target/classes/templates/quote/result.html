@@ -2,8 +2,8 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>見積もり結果画面</title>
+    <!-- ★★★ 修正箇所: estimate.customer を quoteForm に変更 ★★★ -->
+    <title th:text="${quoteForm.lastName} + ${quoteForm.firstName} + 'さんの見積もり結果'"></title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; }
@@ -79,25 +79,26 @@
     <div class="container">
         <h1>見積もり結果</h1>
 
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
         <h2>見積もり内容</h2>
         <div class="quote-details">
             <p><strong>保険名:</strong> <span th:text="${quoteForm.insuranceName}"></span></p>
             <p><strong>保険内容:</strong> <span th:text="${quoteForm.insuranceContent}"></span></p>
             <p><strong>月々金額:</strong> <span th:text="${#numbers.formatInteger(quoteForm.monthlyPremium, 1, 'COMMA')} + '円'"></span></p>
-            <p><strong>給付金/返金金額:</strong> <span th:text="${quoteForm.benefitAmount}"></span></p>
-
-            <div th:if="${quoteForm.numberOfPayments != null}">
-                <p><strong>支払い回数:</strong> <span th:text="${quoteForm.numberOfPayments}"></span>回</p>
+            
+            <div th:switch="${quoteForm.insuranceName}">
+                <span th:case="'医療保険'">
+                    <p><strong>給付内容:</strong> 入院日額<span th:text="${#numbers.formatInteger(quoteForm.dailyHospitalizationFee, 1, 'COMMA')}"></span>円、保障期間<span th:text="${quoteForm.paymentDays}"></span>日</p>
+                </span>
+                <span th:case="'がん保険'">
+                    <p><strong>給付内容:</strong> 一時金<span th:text="${#numbers.formatInteger(quoteForm.benefitAmount / 10000, 1, 'COMMA')}"></span>万円、支払い回数<span th:text="${quoteForm.numberOfPayments}"></span>回</p>
+                </span>
+                <span th:case="'終身保険'">
+                    <p><strong>給付内容:</strong> 死亡保障<span th:text="${#numbers.formatInteger(quoteForm.benefitAmount / 10000, 1, 'COMMA')}"></span>万円</p>
+                </span>
             </div>
-            <p th:if="${quoteForm.dailyHospitalizationFee != null}">
-                <strong>1日につき入院費:</strong> <span th:text="${quoteForm.dailyHospitalizationFee}"></span>
-            </p>
-            <p th:if="${quoteForm.paymentDays != null}">
-                <strong>支払い日数:</strong> <span th:text="${quoteForm.paymentDays}"></span>
-            </p>
-            <p th:if="${quoteForm.surrenderValue != null}">
-                <strong>解約返戻金:</strong> <span th:text="${#numbers.formatInteger(quoteForm.surrenderValue, 1, 'COMMA')} + '円'"></span>
-            </p>
         </div>
 
         <h2>顧客情報入力</h2>
@@ -110,7 +111,8 @@
             <input type="hidden" th:field="*{monthlyPremium}" />
             <input type="hidden" th:field="*{benefitAmount}" />
             <input type="hidden" th:field="*{numberOfPayments}" /> <input type="hidden" th:field="*{dailyHospitalizationFee}" /> <input type="hidden" th:field="*{paymentDays}" />
-            <input type="hidden" th:field="*{surrenderValue}" /> <div class="form-group">
+            <!-- 解約返戻金のhidden inputは削除済み -->
+            <div class="form-group">
                 <label for="lastName">姓:</label>
                 <input type="text" id="lastName" th:field="*{lastName}" required>
                 <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="error-message"></span>
@@ -138,7 +140,7 @@
 
             <div class="button-group">
                 <button type="submit">結果を登録</button>
-                <a th:href="@{/quote}" class="edit-button">編集</a>
+                <a th:href="@{/quote/form}" class="edit-button">戻る</a>
                 <a th:href="@{/home}" class="home-button">ホームに戻る</a>
             </div>
         </form>
