@@ -36,10 +36,10 @@ public class QuoteForm {
     private String insuranceName;
     private String insuranceContent;
     
-    private BigDecimal monthlyPremium; // ★型をIntegerからBigDecimalに変更
-    private BigDecimal dailyHospitalizationFee; // ★型をIntegerからBigDecimalに変更
+    private BigDecimal monthlyPremium; 
+    private BigDecimal dailyHospitalizationFee; 
     private Integer paymentDays;
-    private BigDecimal benefitAmount; // ★型をIntegerからBigDecimalに変更
+    private BigDecimal benefitAmount; 
     private Integer numberOfPayments;
     private BigDecimal surrenderValue;
 
@@ -70,22 +70,22 @@ public class QuoteForm {
     @Override
     public String toString() {
         return "QuoteForm{" +
-               "productId=" + productId +
-               ", age=" + age +
-               ", gender='" + gender + '\'' +
-               ", insuranceName='" + insuranceName + '\'' +
-               ", insuranceContent='" + insuranceContent + '\'' +
-               ", monthlyPremium=" + monthlyPremium +
-               ", dailyHospitalizationFee=" + dailyHospitalizationFee +
-               ", paymentDays=" + paymentDays +
-               ", benefitAmount=" + benefitAmount +
-               ", numberOfPayments=" + numberOfPayments +
-               ", surrenderValue=" + surrenderValue +
-               ", lastName='" + lastName + '\'' +
-               ", firstName='" + firstName + '\'' +
-               ", dateOfBirth=" + dateOfBirth +
-               ", phoneNumber='" + phoneNumber + '\'' +
-               ", email='" + email + '\'' +
-               '}';
+                "productId=" + productId +
+                ", age=" + age +
+                ", gender='" + gender + '\'' +
+                ", insuranceName='" + insuranceName + '\'' +
+                ", insuranceContent='" + insuranceContent + '\'' +
+                ", monthlyPremium=" + monthlyPremium +
+                ", dailyHospitalizationFee=" + dailyHospitalizationFee +
+                ", paymentDays=" + paymentDays +
+                ", benefitAmount=" + benefitAmount +
+                ", numberOfPayments=" + numberOfPayments +
+                ", surrenderValue=" + surrenderValue +
+                ", lastName='" + lastName + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

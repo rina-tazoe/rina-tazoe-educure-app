@@ -76,8 +76,8 @@ public class Quote {
     @Column(name = "created_by_user_id") // 登録ユーザーのIDを直接持つ場合
     private Long createdByUserId;
 
-    @Column(name = "amount") // これは以前の `amount` フィールド。必要に応じて削除または用途を明確にする
-    private Integer amount;
+    // @Column(name = "amount") // ★削除: このフィールドは不要です
+    // private Integer amount;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -88,14 +88,4 @@ public class Quote {
     private LocalDateTime updatedAt;
 
     // GetterとSetterはLombokの@Dataアノテーションによって自動生成されます。
-    // 手動で記述する場合は以下のようにします（例: monthlyPremium）
-    /*
-    public BigDecimal getMonthlyPremium() {
-        return monthlyPremium;
-    }
-
-    public void setMonthlyPremium(BigDecimal monthlyPremium) {
-        this.monthlyPremium = monthlyPremium;
-    }
-    */
 }

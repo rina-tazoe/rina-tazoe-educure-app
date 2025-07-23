@@ -2,7 +2,6 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <!-- ★★★ 修正箇所: estimate.customer を quoteForm に変更 ★★★ -->
     <title th:text="${quoteForm.lastName} + ${quoteForm.firstName} + 'さんの見積もり結果'"></title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
@@ -90,13 +89,31 @@
             
             <div th:switch="${quoteForm.insuranceName}">
                 <span th:case="'医療保険'">
-                    <p><strong>給付内容:</strong> 入院日額<span th:text="${#numbers.formatInteger(quoteForm.dailyHospitalizationFee, 1, 'COMMA')}"></span>円、保障期間<span th:text="${quoteForm.paymentDays}"></span>日</p>
+                    <p>
+                        <strong>給付内容:</strong> 入院日額
+                        <span th:if="${quoteForm.dailyHospitalizationFee != null}" th:text="${#numbers.formatInteger(quoteForm.dailyHospitalizationFee, 1, 'COMMA')}"></span>
+                        <span th:unless="${quoteForm.dailyHospitalizationFee != null}">-</span>
+                        円、保障期間<span th:text="${quoteForm.paymentDays}"></span>日
+                    </p>
                 </span>
                 <span th:case="'がん保険'">
-                    <p><strong>給付内容:</strong> 一時金<span th:text="${#numbers.formatInteger(quoteForm.benefitAmount / 10000, 1, 'COMMA')}"></span>万円、支払い回数<span th:text="${quoteForm.numberOfPayments}"></span>回</p>
+                    <p>
+                        <strong>給付内容:</strong> 一時金
+                        <span th:if="${quoteForm.benefitAmount != null}" th:text="${#numbers.formatInteger(quoteForm.benefitAmount / 10000, 1, 'COMMA')}"></span>
+                        <span th:unless="${quoteForm.benefitAmount != null}">-</span>
+                        万円、支払い回数<span th:text="${quoteForm.numberOfPayments}"></span>回
+                    </p>
                 </span>
                 <span th:case="'終身保険'">
-                    <p><strong>給付内容:</strong> 死亡保障<span th:text="${#numbers.formatInteger(quoteForm.benefitAmount / 10000, 1, 'COMMA')}"></span>万円</p>
+                    <p>
+                        <strong>給付内容:</strong> 死亡保障
+                        <span th:if="${quoteForm.benefitAmount != null}" th:text="${#numbers.formatInteger(quoteForm.benefitAmount / 10000, 1, 'COMMA')}"></span>
+                        <span th:unless="${quoteForm.benefitAmount != null}">-</span>
+                        万円
+                    </p>
+                </span>
+                <span th:case="*">
+                    <p><strong>給付内容:</strong> 情報なし</p>
                 </span>
             </div>
         </div>
@@ -110,8 +127,9 @@
             <input type="hidden" th:field="*{insuranceContent}" />
             <input type="hidden" th:field="*{monthlyPremium}" />
             <input type="hidden" th:field="*{benefitAmount}" />
-            <input type="hidden" th:field="*{numberOfPayments}" /> <input type="hidden" th:field="*{dailyHospitalizationFee}" /> <input type="hidden" th:field="*{paymentDays}" />
-            <!-- 解約返戻金のhidden inputは削除済み -->
+            <input type="hidden" th:field="*{numberOfPayments}" />
+            <input type="hidden" th:field="*{dailyHospitalizationFee}" />
+            <input type="hidden" th:field="*{paymentDays}" />
             <div class="form-group">
                 <label for="lastName">姓:</label>
                 <input type="text" id="lastName" th:field="*{lastName}" required>

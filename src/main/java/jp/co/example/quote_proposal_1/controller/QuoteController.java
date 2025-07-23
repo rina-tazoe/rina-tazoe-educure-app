@@ -22,7 +22,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jp.co.example.quote_proposal_1.entity.InsuranceProduct;
 import jp.co.example.quote_proposal_1.entity.Quote;
 import jp.co.example.quote_proposal_1.form.QuoteForm;
-import jp.co.example.quote_proposal_1.service.EstimateService;
 import jp.co.example.quote_proposal_1.service.InsuranceProductService;
 import jp.co.example.quote_proposal_1.service.QuoteService;
 import jp.co.example.quote_proposal_1.validation.ValidationGroups;
@@ -34,17 +33,14 @@ public class QuoteController {
     private static final Logger logger = LoggerFactory.getLogger(QuoteController.class);
 
     private final InsuranceProductService insuranceProductService;
-    private final QuoteService quoteService;
-    private final EstimateService estimateService;
+    private final QuoteService quoteService; 
 
     @Autowired
     public QuoteController(
             InsuranceProductService insuranceProductService,
-            QuoteService quoteService,
-            EstimateService estimateService) {
+            QuoteService quoteService) { 
         this.insuranceProductService = insuranceProductService;
         this.quoteService = quoteService;
-        this.estimateService = estimateService;
     }
 
     /**
@@ -82,21 +78,20 @@ public class QuoteController {
             return "quote/form";
         }
 
-        // ここで EstimateService の getCalculatedPremium メソッドを呼び出す
-        // このメソッドは QuoteForm を受け取り、計算結果をQuoteFormに設定して返します
-        QuoteForm calculatedQuoteForm = estimateService.getCalculatedPremium(quoteForm); // ★★★ 修正箇所 ★★★
+        // QuoteService の getCalculatedPremium メソッドを呼び出す
+        QuoteForm calculatedQuoteForm = quoteService.getCalculatedPremium(quoteForm);
 
-        // 保険商品名を設定 (これはそのまま残す)
-        InsuranceProduct selectedProduct = insuranceProductService.findById(calculatedQuoteForm.getProductId()) // ★★★ 修正箇所 ★★★
+        // 保険商品名を設定
+        InsuranceProduct selectedProduct = insuranceProductService.findById(calculatedQuoteForm.getProductId())
                 .orElseThrow(() -> {
-                    logger.error("ERROR: IDで保険商品が見つかりません: {}", calculatedQuoteForm.getProductId()); // ★★★ 修正箇所 ★★★
+                    logger.error("ERROR: IDで保険商品が見つかりません: {}", calculatedQuoteForm.getProductId());
                     return new ResponseStatusException(HttpStatus.NOT_FOUND, "選択された保険商品が見つかりませんでした。");
                 });
-        calculatedQuoteForm.setInsuranceName(selectedProduct.getProductName()); // ★★★ 修正箇所 ★★★
+        calculatedQuoteForm.setInsuranceName(selectedProduct.getProductName());
 
         System.out.println("DEBUG: 計算後のQuoteForm: " + calculatedQuoteForm);
 
-        model.addAttribute("quoteForm", calculatedQuoteForm); // ★★★ 修正箇所 ★★★
+        model.addAttribute("quoteForm", calculatedQuoteForm);
         return "quote/result"; // 計算結果画面へ遷移
     }
 
@@ -133,7 +128,7 @@ public class QuoteController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "指定された見積もりが見つかりません。ID: " + id);
         }
         Quote quote = quoteOpt.get();
-        model.addAttribute("estimate", quote);
+        model.addAttribute("estimate", quote); // モデル名は estimate のまま
 
         return "quote/detail";
     }
