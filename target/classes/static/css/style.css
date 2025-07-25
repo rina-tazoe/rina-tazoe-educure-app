@@ -17,7 +17,7 @@ h1 {
     text-align: center;
     margin-bottom: 20px;
 }
-h2, h3 { /* h2とh3のスタイルも追加 */
+h2, h3 { 
     color: #0056b3;
     margin-top: 25px;
     margin-bottom: 15px;
@@ -26,7 +26,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    margin-bottom: 20px; /* テーブルの下にも余白 */
+    margin-bottom: 20px; 
 }
 th, td {
     border: 1px solid #ddd;
@@ -41,7 +41,7 @@ tr:nth-child(even) {
     background-color: #f2f2f2;
 }
 
-/* フォーム関連のスタイル */
+
 .form-group {
     margin-bottom: 15px;
 }
@@ -53,20 +53,19 @@ tr:nth-child(even) {
 }
 
 .form-control {
-    width: calc(100% - 18px); /* paddingとborder分を考慮 */
+    width: calc(100% - 18px); 
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    box-sizing: border-box; /* paddingが幅に含まれるように */
-    font-size: 16px; /* フォントサイズも統一 */
+    box-sizing: border-box;
+    font-size: 16px; 
 }
 
-/* ボタン関連のスタイル */
 .btn {
     display: inline-block;
     padding: 10px 20px;
-    margin-top: 10px; /* 上部に余白 */
-    margin-right: 10px; /* ボタン同士の右に余白 */
+    margin-top: 10px;
+    margin-right: 10px; 
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -94,30 +93,29 @@ tr:nth-child(even) {
 
 .btn-warning {
     background-color: #ffc107;
-    color: #333; /* 警告ボタンの文字色を調整 */
+    color: #333; 
 }
 
 .btn-warning:hover {
     background-color: #e0a800;
 }
 
-/* リンクボタンのスタイルを調整 */
 a {
     display: inline-block;
-    margin-top: 20px; /* 他の要素との区切り */
+    margin-top: 20px; 
     padding: 10px 15px;
-    background-color: #007bff; /* 青色の背景 */
-    color: white; /* 白い文字 */
+    background-color: #007bff;
+    color: white;
     text-decoration: none;
     border-radius: 5px;
-    transition: background-color 0.3s ease; /* ホバー時のアニメーション */
+    transition: background-color 0.3s ease; 
 }
 a:hover {
-    background-color: #0056b3; /* ホバー時に濃い青 */
+    background-color: #0056b3; 
 }
-/* 特定のリンクにスタイルを適用する場合の例 */
+
 .container p a {
-    margin-top: 10px; /* フォームの下のリンク用 */
+    margin-top: 10px; 
 }
 
 
