@@ -42,11 +42,10 @@ public class CustomerController {
         }
         Customer customer = customerOptional.get();
 
-        // QuoteService を使用し、Quote オブジェクトを取得
         List<Quote> quotes = quoteService.findQuotesByCustomerId(customerId); 
 
         model.addAttribute("customer", customer);
-        model.addAttribute("estimates", quotes); // 変数名を estimates のままにしておく (HTMLの変更を最小限にするため)
+        model.addAttribute("estimates", quotes); 
 
         if (model.containsAttribute("message")) {
             model.addAttribute("message", model.getAttribute("message"));
@@ -63,7 +62,6 @@ public class CustomerController {
                                  @PathVariable("estimateId") Long estimateId,
                                  RedirectAttributes redirectAttributes) {
         try {
-            // QuoteService を使用
             quoteService.deleteQuoteById(estimateId);
             redirectAttributes.addFlashAttribute("message", "見積もりID: " + estimateId + " を削除しました。");
         } catch (Exception e) {

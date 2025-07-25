@@ -1,6 +1,6 @@
 package jp.co.example.quote_proposal_1.entity;
 
-import java.math.BigDecimal; // BigDecimal を使用するため追加
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -22,9 +22,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "quotes") // テーブル名が quotes であると仮定
+@Table(name = "quotes") 
 @Data
-@NoArgsConstructor // JPAのために引数なしコンストラクタが必要
+@NoArgsConstructor 
 @EntityListeners(AuditingEntityListener.class)
 public class Quote {
 
@@ -37,7 +37,7 @@ public class Quote {
     private Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "insurance_product_id", nullable = false) // データベースのカラム名に合わせる
+    @JoinColumn(name = "insurance_product_id", nullable = false) 
     private InsuranceProduct insuranceProduct;
 
     @Column(name = "age", nullable = false)
@@ -47,25 +47,25 @@ public class Quote {
     private String gender;
 
     @Column(name = "monthly_premium", nullable = false, precision = 10, scale = 2)
-    private BigDecimal monthlyPremium; // ★型をBigDecimalに変更
+    private BigDecimal monthlyPremium;
 
-    @Column(name = "benefit", columnDefinition = "TEXT") // 保険内容/特約内容
+    @Column(name = "benefit", columnDefinition = "TEXT") 
     private String benefit;
 
     @Column(name = "daily_hospitalization_fee", precision = 10, scale = 2)
-    private BigDecimal dailyHospitalizationFee; // ★型をBigDecimalに変更
+    private BigDecimal dailyHospitalizationFee; 
 
     @Column(name = "payment_days")
     private Integer paymentDays;
 
     @Column(name = "benefit_amount", precision = 10, scale = 2)
-    private BigDecimal benefitAmount; // ★型をBigDecimalに変更
+    private BigDecimal benefitAmount; 
 
     @Column(name = "number_of_payments")
     private Integer numberOfPayments;
 
     @Column(name = "surrender_value", precision = 10, scale = 2)
-    private BigDecimal surrenderValue; // ★型をBigDecimalに変更
+    private BigDecimal surrenderValue;
 
     @Column(name = "estimate_date", nullable = false)
     private LocalDate estimateDate;
@@ -73,11 +73,8 @@ public class Quote {
     @Column(name = "status", nullable = false, length = 50)
     private String status;
 
-    @Column(name = "created_by_user_id") // 登録ユーザーのIDを直接持つ場合
+    @Column(name = "created_by_user_id") 
     private Long createdByUserId;
-
-    // @Column(name = "amount") // ★削除: このフィールドは不要です
-    // private Integer amount;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -87,5 +84,4 @@ public class Quote {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // GetterとSetterはLombokの@Dataアノテーションによって自動生成されます。
 }

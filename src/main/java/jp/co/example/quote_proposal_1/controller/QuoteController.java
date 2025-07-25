@@ -43,9 +43,7 @@ public class QuoteController {
         this.quoteService = quoteService;
     }
 
-    /**
-     * 見積もり入力フォームを表示する
-     */
+    //見積もり入力フォームを表示する
     @GetMapping("/form")
     public String showQuoteForm(Model model) {
         QuoteForm quoteForm = new QuoteForm();
@@ -59,9 +57,7 @@ public class QuoteController {
         return "quote/form";
     }
 
-    /**
-     * 見積もりを計算し、結果を表示する
-     */
+    //見積もりを計算し、結果を表示する
     @PostMapping("/calculate")
     public String calculateQuote(
             @Validated(ValidationGroups.QuoteCalculation.class) @ModelAttribute QuoteForm quoteForm,
@@ -78,10 +74,8 @@ public class QuoteController {
             return "quote/form";
         }
 
-        // QuoteService の getCalculatedPremium メソッドを呼び出す
         QuoteForm calculatedQuoteForm = quoteService.getCalculatedPremium(quoteForm);
 
-        // 保険商品名を設定
         InsuranceProduct selectedProduct = insuranceProductService.findById(calculatedQuoteForm.getProductId())
                 .orElseThrow(() -> {
                     logger.error("ERROR: IDで保険商品が見つかりません: {}", calculatedQuoteForm.getProductId());
@@ -92,7 +86,7 @@ public class QuoteController {
         System.out.println("DEBUG: 計算後のQuoteForm: " + calculatedQuoteForm);
 
         model.addAttribute("quoteForm", calculatedQuoteForm);
-        return "quote/result"; // 計算結果画面へ遷移
+        return "quote/result"; 
     }
 
     @PostMapping("/register")
@@ -128,7 +122,7 @@ public class QuoteController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "指定された見積もりが見つかりません。ID: " + id);
         }
         Quote quote = quoteOpt.get();
-        model.addAttribute("estimate", quote); // モデル名は estimate のまま
+        model.addAttribute("estimate", quote); 
 
         return "quote/detail";
     }

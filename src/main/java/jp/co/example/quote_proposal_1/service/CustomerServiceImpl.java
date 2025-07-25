@@ -56,14 +56,11 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findById(id);
     }
 
-    // ★★★ ここから追加するメソッドの実装 ★★★
-    @Override // CustomerService インターフェースで定義したメソッドの実装
+    @Override 
     @Transactional(readOnly = true)
     public Customer findCustomerById(Long id) {
-        // 既存の findById メソッドを利用して実装
         return customerRepository.findById(id).orElse(null);
     }
-    // ★★★ 追加するメソッドの実装はここまで ★★★
 
     private Long getCurrentAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

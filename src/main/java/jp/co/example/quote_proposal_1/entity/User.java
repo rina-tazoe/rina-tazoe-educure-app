@@ -18,12 +18,12 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "users") // テーブル名がusersであることを明示
+@Table(name = "users") 
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // ★★★ 修正: ID生成戦略をIDENTITYに設定 ★★★
-    @Column(name = "user_id") // DBのカラム名がuser_idであることを明示
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  
+    @Column(name = "user_id") 
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -32,9 +32,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @ManyToOne(fetch = FetchType.EAGER) // Roleエンティティへの関連付け
-    @JoinColumn(name = "role_id", nullable = false) // userテーブルのrole_idカラムと紐付け
-    private Role role; // Roleオブジェクトを持つ
+    @ManyToOne(fetch = FetchType.EAGER) 
+    @JoinColumn(name = "role_id", nullable = false) 
+    private Role role; 
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -42,7 +42,6 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    // PrePersistとPreUpdateは引き続き必要
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

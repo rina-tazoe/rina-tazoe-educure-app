@@ -20,29 +20,15 @@ public class RoleService {
     public RoleService(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
-
-    /**
-     * 全ロールを取得する
-     * @return ロールのリスト
-     */
+    
     public List<Role> findAllRoles() {
         return roleRepository.findAll();
     }
 
-    /**
-     * 指定されたIDのロールを取得する
-     * @param id ロールID
-     * @return ロール (Optional)
-     */
     public Optional<Role> findById(Long id) {
         return roleRepository.findById(id);
     }
 
-    /**
-     * ロール名でロールを取得する
-     * @param name ロール名
-     * @return ロール (Optional)
-     */
     public Optional<Role> findByName(String name) {
         return roleRepository.findByName(name);
     }

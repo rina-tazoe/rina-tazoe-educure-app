@@ -22,5 +22,5 @@ public class UserForm {
     @NotBlank(message = "パスワード（確認）は必須です")
     private String confirmPassword;
 
-    private Long roleId; // ロール選択用
+    private Long roleId; 
 }

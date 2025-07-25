@@ -1,4 +1,4 @@
-package jp.co.example.quote_proposal_1.service; // ★このパッケージ宣言が重要です★
+package jp.co.example.quote_proposal_1.service; 
 
 import java.util.List;
 
@@ -20,10 +20,9 @@ public class WholeLifeInsuranceService {
         this.wholeLifeInsuranceDetailRepository = wholeLifeInsuranceDetailRepository;
     }
 
-    // product_id に基づいて終身保険の詳細リストを取得
+    // product_id で終身保険を取得
     public List<WholeLifeInsuranceDetail> getWholeLifeRatesByProductId(Long productId) {
         return wholeLifeInsuranceDetailRepository.findByProductIdOrderByMinAge(productId);
     }
 
-    // 必要に応じて他のビジネスロジックを追加
 }

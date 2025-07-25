@@ -29,8 +29,7 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
-    // findByName ではなく findByProductName を呼び出すように修正
     public Optional<InsuranceProduct> findProductByName(String name) {
-        return productRepository.findByProductName(name); // ★ここを修正してください
+        return productRepository.findByProductName(name);
     }
 }

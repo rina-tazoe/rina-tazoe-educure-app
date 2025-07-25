@@ -20,7 +20,6 @@ public class MedicalInsuranceDetailService {
         this.medicalInsuranceDetailRepository = medicalInsuranceDetailRepository;
     }
 
-    // product_id と年齢範囲に基づいて医療保険の詳細を取得
     public Optional<MedicalInsuranceDetail> findByProductIdAndAgeGroup(Long productId, Integer age) {
         return medicalInsuranceDetailRepository.findByProductIdAndMinAgeLessThanEqualAndMaxAgeGreaterThanEqual(productId, age, age);
     }

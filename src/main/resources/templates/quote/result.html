@@ -4,75 +4,8 @@
     <meta charset="UTF-8">
     <title th:text="${quoteForm.lastName} + ${quoteForm.firstName} + 'さんの見積もり結果'"></title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); width: 800px; max-width: 90%; text-align: center; }
-        h1 { color: #333; margin-bottom: 20px; }
-        h2 { color: #007bff; margin-top: 30px; margin-bottom: 15px; }
-        .quote-details, .customer-form { text-align: left; margin-bottom: 20px; }
-        .quote-details p { margin-bottom: 8px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
-        input[type="text"], input[type="date"], input[type="email"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 1em;
-        }
-        .error-message {
-            color: red;
-            font-size: 0.85em;
-            margin-top: 5px;
-            display: block;
-        }
-        .button-group {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-        }
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-        }
-        button[type="submit"] {
-            background-color: #28a745;
-            color: white;
-        }
-        button[type="submit"]:hover {
-            background-color: #218838;
-        }
-        .edit-button {
-            background-color: #ffc107;
-            color: #333;
-            text-decoration: none;
-            display: inline-block;
-            padding: 10px 20px;
-            border-radius: 4px;
-            text-align: center;
-        }
-        .edit-button:hover {
-            background-color: #e0a800;
-        }
-        .home-button {
-            background-color: #6c757d;
-            color: white;
-            text-decoration: none;
-            display: inline-block;
-            padding: 10px 20px;
-            border-radius: 4px;
-            text-align: center;
-        }
-        .home-button:hover {
-            background-color: #5a6268;
-        }
-    </style>
+    
+	
 </head>
 <body>
     <div class="container">
@@ -157,7 +90,7 @@
             </div>
 
             <div class="button-group">
-                <button type="submit">結果を登録</button>
+				<button type="submit" class="btn btn-primary">結果を登録</button>
                 <a th:href="@{/quote/form}" class="edit-button">戻る</a>
                 <a th:href="@{/home}" class="home-button">ホームに戻る</a>
             </div>

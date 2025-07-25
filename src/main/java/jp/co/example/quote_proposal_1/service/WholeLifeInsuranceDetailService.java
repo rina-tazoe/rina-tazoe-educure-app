@@ -11,7 +11,7 @@ import jp.co.example.quote_proposal_1.repository.WholeLifeInsuranceDetailReposit
 
 @Service
 @Transactional(readOnly = true)
-public class WholeLifeInsuranceDetailService { // クラス名を変更 (Detailを付与)
+public class WholeLifeInsuranceDetailService { 
 
     private final WholeLifeInsuranceDetailRepository wholeLifeInsuranceDetailRepository;
 
@@ -20,9 +20,8 @@ public class WholeLifeInsuranceDetailService { // クラス名を変更 (Detail�
         this.wholeLifeInsuranceDetailRepository = wholeLifeInsuranceDetailRepository;
     }
 
-    // product_id と年齢範囲に基づいて終身保険の詳細を取得
+    // product_id と年齢範囲で終身保険を取得
     public Optional<WholeLifeInsuranceDetail> findByProductIdAndAgeGroup(Long productId, Integer age) {
-        // リポジトリのメソッド名と引数に合わせて調整
         return wholeLifeInsuranceDetailRepository.findByProductIdAndMinAgeLessThanEqualAndMaxAgeGreaterThanEqual(productId, age, age);
     }
 }

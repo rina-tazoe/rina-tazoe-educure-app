@@ -1,6 +1,6 @@
 package jp.co.example.quote_proposal_1.form;
 
-import java.math.BigDecimal; // BigDecimal を使用するため追加
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import jakarta.validation.constraints.Email;
@@ -15,13 +15,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import jp.co.example.quote_proposal_1.validation.ValidationGroups;
 import lombok.Data;
-import lombok.NoArgsConstructor; // Lombok を使用している場合
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 public class QuoteForm {
 
-    // 見積もり計算用フィールド
     @NotNull(groups = ValidationGroups.QuoteCalculation.class, message = "保険商品を選択してください。")
     private Long productId;
 
@@ -32,7 +31,7 @@ public class QuoteForm {
     @NotBlank(groups = ValidationGroups.QuoteCalculation.class, message = "性別を選択してください。")
     private String gender;
 
-    // 計算結果表示用フィールド（QuoteServiceから設定される）
+    // 計算結果表示
     private String insuranceName;
     private String insuranceContent;
     
@@ -43,7 +42,7 @@ public class QuoteForm {
     private Integer numberOfPayments;
     private BigDecimal surrenderValue;
 
-    // 顧客情報登録用フィールド
+    // 顧客情報登録
     @NotBlank(groups = ValidationGroups.CustomerRegistration.class, message = "姓は必須です。")
     @Size(max = 50, groups = ValidationGroups.CustomerRegistration.class, message = "姓は50文字以内で入力してください。")
     private String lastName;
@@ -66,7 +65,6 @@ public class QuoteForm {
     @Size(max = 255, groups = ValidationGroups.CustomerRegistration.class, message = "メールアドレスは255文字以内で入力してください。")
     private String email;
 
-    // toString メソッドをオーバーライドしてデバッグ出力を改善
     @Override
     public String toString() {
         return "QuoteForm{" +

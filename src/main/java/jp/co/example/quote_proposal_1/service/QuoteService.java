@@ -7,10 +7,8 @@ import jp.co.example.quote_proposal_1.entity.Quote;
 import jp.co.example.quote_proposal_1.form.QuoteForm;
 
 public interface QuoteService {
-    // 仮のcalculatePremiumは削除または無視
-    // int calculatePremium(QuoteForm quoteForm);
 
-    // 見積もり計算ロジック
+    // 見積もり計算
     QuoteForm getCalculatedPremium(QuoteForm quoteForm);
 
     // 見積もり登録

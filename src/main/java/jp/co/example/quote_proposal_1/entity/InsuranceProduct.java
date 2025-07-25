@@ -27,10 +27,10 @@ public class InsuranceProduct {
     private Long productId;
 
     @Column(name = "product_name", nullable = false, length = 100)
-    private String productName; // HTMLの estimate.insuranceProduct?.name に対応
+    private String productName; 
 
     @Column(name = "product_description", columnDefinition = "TEXT")
-    private String productDescription; // HTMLの estimate.insuranceProduct?.description に対応
+    private String productDescription; 
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -43,12 +43,10 @@ public class InsuranceProduct {
     public InsuranceProduct() {
     }
 
-    // 必要であれば、nameのゲッターを追加してHTMLの.name参照に対応させる
     public String getName() {
         return this.productName;
     }
 
-    // 必要であれば、descriptionのゲッターを追加してHTMLの.description参照に対応させる
     public String getDescription() {
         return this.productDescription;
     }

@@ -25,31 +25,30 @@ public class ProductController {
 
     private final ProductService productService;
     private final MedicalInsuranceService medicalInsuranceService;
-    private final CancerInsuranceService cancerInsuranceService; // 追加
-    private final WholeLifeInsuranceService wholeLifeInsuranceService; // 追加
+    private final CancerInsuranceService cancerInsuranceService; 
+    private final WholeLifeInsuranceService wholeLifeInsuranceService; 
 
-    // コンストラクタインジェクション
     public ProductController(
             ProductService productService,
             MedicalInsuranceService medicalInsuranceService,
-            CancerInsuranceService cancerInsuranceService, // 追加
-            WholeLifeInsuranceService wholeLifeInsuranceService) { // 追加
+            CancerInsuranceService cancerInsuranceService,
+            WholeLifeInsuranceService wholeLifeInsuranceService) { 
         this.productService = productService;
         this.medicalInsuranceService = medicalInsuranceService;
-        this.cancerInsuranceService = cancerInsuranceService; // 追加
-        this.wholeLifeInsuranceService = wholeLifeInsuranceService; // 追加
+        this.cancerInsuranceService = cancerInsuranceService; 
+        this.wholeLifeInsuranceService = wholeLifeInsuranceService; 
     }
 
-    // 商品カテゴリ選択ページを表示するメソッド
+    // 商品カテゴリ選択ページを表示する
     @GetMapping
     public String showProductCategories() {
-        return "products/category_list"; // products/category_list.html を表示
+        return "products/category_list"; 
     }
 
-    // 医療保険詳細ページを表示するメソッド
+    // 医療保険詳細ページを表示する
     @GetMapping("/medical")
     public String showMedicalInsuranceDetail(Model model) {
-        Long medicalProductId = 3L; // 医療保険のproduct_idは3Lと仮定
+        Long medicalProductId = 3L; 
 
         Optional<InsuranceProduct> productOptional = productService.findProductById(medicalProductId);
 
@@ -65,12 +64,10 @@ public class ProductController {
         return "products/medical_insurance";
     }
 
-    // ★★★ ここから追加 ★★★
-
-    // がん保険詳細ページを表示するメソッド
+    // がん保険詳細ページを表示する
     @GetMapping("/cancer")
     public String showCancerInsuranceDetail(Model model) {
-        Long cancerProductId = 1L; // がん保険のproduct_idは1Lと仮定 (data.sqlに基づく)
+        Long cancerProductId = 1L;
 
         Optional<InsuranceProduct> productOptional = productService.findProductById(cancerProductId);
 
@@ -81,15 +78,15 @@ public class ProductController {
         model.addAttribute("product", product);
 
         List<CancerInsuranceDetail> cancerRates = cancerInsuranceService.getCancerRatesByProductId(cancerProductId);
-        model.addAttribute("cancerRates", cancerRates); // Thymeleafの${cancerRates}に対応
+        model.addAttribute("cancerRates", cancerRates); 
 
-        return "products/cancer_insurance"; // src/main/resources/templates/products/cancer_insurance.html を表示
+        return "products/cancer_insurance"; 
     }
 
-    // 終身保険詳細ページを表示するメソッド
+    // 終身保険詳細ページを表示する
     @GetMapping("/wholelife")
     public String showWholeLifeInsuranceDetail(Model model) {
-        Long wholeLifeProductId = 2L; // 終身保険のproduct_idは2Lと仮定 (data.sqlに基づく)
+        Long wholeLifeProductId = 2L; 
 
         Optional<InsuranceProduct> productOptional = productService.findProductById(wholeLifeProductId);
 
@@ -100,10 +97,8 @@ public class ProductController {
         model.addAttribute("product", product);
 
         List<WholeLifeInsuranceDetail> wholeLifeRates = wholeLifeInsuranceService.getWholeLifeRatesByProductId(wholeLifeProductId);
-        model.addAttribute("wholeLifeRates", wholeLifeRates); // Thymeleafの${wholeLifeRates}に対応
+        model.addAttribute("wholeLifeRates", wholeLifeRates); 
 
-        return "products/wholelife_insurance"; // src/main/resources/templates/products/wholelife_insurance.html を表示
+        return "products/wholelife_insurance"; 
     }
-
-    // ★★★ ここまで追加 ★★★
 }

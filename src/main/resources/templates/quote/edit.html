@@ -7,7 +7,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function() {
-            // 保険商品または年齢が変更されたときにAjaxで金額を再取得
             $('#insuranceType, #ageGroupMin, #gender').change(function() {
                 var selectedAgeGroupMin = $('#ageGroupMin').val();
                 var selectedGender = $('#gender').val();
@@ -15,7 +14,7 @@
 
                 if (selectedAgeGroupMin && selectedGender && selectedInsuranceType) {
                     $.ajax({
-                        url: '/api/quote/calculate-monthly-payment', // 新しいAPIエンドポイント
+                        url: '/api/quote/calculate-monthly-payment',
                         type: 'GET',
                         data: {
                             ageGroupMin: selectedAgeGroupMin,
@@ -23,14 +22,11 @@
                             insuranceType: selectedInsuranceType
                         },
                         success: function(response) {
-                            // APIからの応答で月々金額と返金金額を更新
                             $('#monthlyPaymentDisplay').text(response.monthlyPayment.toLocaleString() + '円');
                             $('#benefitAmountDisplay').text(response.benefitAmount.toLocaleString() + '円');
-                            // 隠しフィールドにも値をセット (サーバー側で再計算するので必須ではないが、安全のため)
                             $('#monthlyPaymentHidden').val(response.monthlyPayment);
                             $('#benefitAmountHidden').val(response.benefitAmount);
 
-                            // 保険内容も更新
                             var insuranceContent = "";
                             if (response.insuranceType === "医療保険") {
                                 insuranceContent = "1日あたり入院費 " + response.dailyHospitalizationFee.toLocaleString() + "円、 最大支払い日数 " + response.paymentDays + "日";
@@ -43,21 +39,18 @@
                         },
                         error: function(xhr, status, error) {
                             console.error("Error fetching payment details: ", error);
-                            // エラー時の処理（例: 金額表示をクリアする）
                             $('#monthlyPaymentDisplay').text("N/A");
                             $('#benefitAmountDisplay').text("N/A");
                             $('#insuranceContentDisplay').text("N/A");
                         }
                     });
                 } else {
-                    // どれかが選択されていない場合は金額表示をクリア
                     $('#monthlyPaymentDisplay').text("N/A");
                     $('#benefitAmountDisplay').text("N/A");
                     $('#insuranceContentDisplay').text("N/A");
                 }
             });
-            // ページロード時に一度計算（既存の値を表示するため）
-            $('#insuranceType').change(); // いずれかのプルダウンのchangeイベントをトリガー
+            $('#insuranceType').change(); 
         });
     </script>
 </head>

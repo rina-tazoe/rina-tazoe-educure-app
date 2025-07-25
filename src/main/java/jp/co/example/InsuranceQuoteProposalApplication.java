@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing
-@EntityScan("jp.co.example.quote_proposal_1.entity") // ★追加：エンティティのパッケージを明示的に指定
+@EntityScan("jp.co.example.quote_proposal_1.entity") 
 public class InsuranceQuoteProposalApplication {
 
     public static void main(String[] args) {

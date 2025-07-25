@@ -24,7 +24,7 @@ public class CancerInsuranceDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cancerInsuranceDetailId; // IDフィールド名はプロジェクトに合わせて調整してください
+    private Long cancerInsuranceDetailId; 
 
     @Column(name = "product_id", nullable = false)
     private Long productId;
@@ -35,11 +35,9 @@ public class CancerInsuranceDetail {
     @Column(name = "max_age", nullable = false)
     private Integer maxAge;
 
-    // ★★★ 修正箇所: カラム名を "payment_monthly_male" に変更 ★★★
     @Column(name = "payment_monthly_male", nullable = false)
     private Integer paymentMonthlyMale;
 
-    // ★★★ 修正箇所: カラム名を "payment_monthly_female" に変更 ★★★
     @Column(name = "payment_monthly_female", nullable = false)
     private Integer paymentMonthlyFemale;
 

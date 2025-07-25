@@ -1,8 +1,7 @@
-package jp.co.example.quote_proposal_1.entity; // もしくは jp.co.example.quote_proposal_1.dto
+package jp.co.example.quote_proposal_1.entity;
 
 import java.math.BigDecimal;
 
-// 見積もり計算結果を保持するシンプルなDTO（データ転送オブジェクト）
 public class Premium {
     private BigDecimal monthlyPremium;
     private BigDecimal surrenderValue;
@@ -12,7 +11,6 @@ public class Premium {
         this.surrenderValue = surrenderValue;
     }
 
-    // Getterメソッド
     public BigDecimal getMonthlyPremium() {
         return monthlyPremium;
     }
@@ -21,5 +19,4 @@ public class Premium {
         return surrenderValue;
     }
 
-    // 必要であればSetterメソッドやtoString()などを追加
 }

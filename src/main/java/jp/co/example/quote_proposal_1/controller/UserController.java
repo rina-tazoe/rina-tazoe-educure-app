@@ -37,32 +37,26 @@ public class UserController {
         this.roleService = roleService;
     }
 
-    /**
-     * ユーザー一覧画面を表示する (管理者のみアクセス可能を想定)
-     */
+    //ユーザー一覧画面を表示する (管理者のみアクセス可能)
     @GetMapping
     public String listUsers(Model model) {
         List<User> users = userService.findAllUsers();
         model.addAttribute("users", users);
         logger.info("ユーザー一覧を表示します。ユーザー数: {}", users.size());
-        return "users/list"; // templates/users/list.html を表示
+        return "users/list"; 
     }
 
-    /**
-     * 新規ユーザー登録フォームを表示する
-     */
+    // 新規ユーザー登録フォームを表示する
     @GetMapping("/new")
     public String showNewUserForm(Model model) {
         model.addAttribute("userForm", new UserForm());
-        List<Role> roles = roleService.findAllRoles(); // ロール選択肢を取得
+        List<Role> roles = roleService.findAllRoles(); 
         model.addAttribute("roles", roles);
         logger.info("新規ユーザー登録フォームを表示します。");
-        return "users/new"; // templates/users/new.html を表示
+        return "users/new"; 
     }
 
-    /**
-     * 新規ユーザーを登録する
-     */
+    //新規ユーザーを登録する
     @PostMapping("/new")
     public String registerUser(@Validated @ModelAttribute UserForm userForm,
                                BindingResult bindingResult,
@@ -82,9 +76,9 @@ public class UserController {
 
         if (bindingResult.hasErrors()) {
             logger.warn("新規ユーザー登録バリデーションエラー: {}", bindingResult.getAllErrors());
-            List<Role> roles = roleService.findAllRoles(); // ロール選択肢を再取得
+            List<Role> roles = roleService.findAllRoles(); 
             model.addAttribute("roles", roles);
-            return "users/new"; // エラーがある場合はフォームに戻す
+            return "users/new"; 
         }
 
         try {
@@ -104,13 +98,10 @@ public class UserController {
             model.addAttribute("roles", roles);
             return "users/new";
         }
-
         return "redirect:/users"; // 登録成功後、ユーザー一覧へリダイレクト
     }
 
-    /**
-     * ユーザーを削除する (管理者のみアクセス可能を想定)
-     */
+    //ユーザーを削除する (管理者のみアクセス可能)
     @PostMapping("/delete/{id}")
     public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         logger.info("ユーザー削除リクエストを受信しました。ID: {}", id);

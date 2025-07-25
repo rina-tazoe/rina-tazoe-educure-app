@@ -10,7 +10,7 @@ import jp.co.example.quote_proposal_1.entity.CancerInsuranceDetail; // がん保
 import jp.co.example.quote_proposal_1.repository.CancerInsuranceRepository; // がん保険リポジトリをインポート
 
 @Service
-@Transactional(readOnly = true) // 読み取り専用トランザクション
+@Transactional(readOnly = true) 
 public class CancerInsuranceService {
 
     private final CancerInsuranceRepository cancerInsuranceRepository;
@@ -20,10 +20,8 @@ public class CancerInsuranceService {
         this.cancerInsuranceRepository = cancerInsuranceRepository;
     }
 
-    // product_id に基づいてがん保険の詳細リストを取得
     public List<CancerInsuranceDetail> getCancerRatesByProductId(Long productId) {
         return cancerInsuranceRepository.findByProductIdOrderByMinAge(productId);
     }
 
-    // 必要に応じて他のビジネスロジックを追加
 }

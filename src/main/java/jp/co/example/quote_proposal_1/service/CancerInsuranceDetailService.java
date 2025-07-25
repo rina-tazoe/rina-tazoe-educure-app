@@ -11,7 +11,7 @@ import jp.co.example.quote_proposal_1.repository.CancerInsuranceRepository; // �
 
 @Service
 @Transactional(readOnly = true)
-public class CancerInsuranceDetailService { // クラス名を変更 (Detailを付与)
+public class CancerInsuranceDetailService { 
 
     private final CancerInsuranceRepository cancerInsuranceRepository;
 
@@ -20,9 +20,7 @@ public class CancerInsuranceDetailService { // クラス名を変更 (Detailを�
         this.cancerInsuranceRepository = cancerInsuranceRepository;
     }
 
-    // product_id と年齢範囲に基づいてがん保険の詳細を取得
     public Optional<CancerInsuranceDetail> findByProductIdAndAgeGroup(Long productId, Integer age) {
-        // リポジトリのメソッド名と引数に合わせて調整
         return cancerInsuranceRepository.findByProductIdAndMinAgeLessThanEqualAndMaxAgeGreaterThanEqual(productId, age, age);
     }
 }

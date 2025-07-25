@@ -32,16 +32,15 @@ public class EstimateService {
     private final InsuranceProductRepository insuranceProductRepository;
     private final UserRepository userRepository;
 
-    // 保険料データを保持するマップ (Product ID -> 性別 -> 年齢層 -> 月々保険料)
+    // 保険料データを保持する
     private Map<Long, Map<String, Map<String, Integer>>> premiumData;
-
-    // 給付金データを保持するマップ (Product ID -> 年齢層 -> 給付金額)
+    // 給付金データを保持する
     private Map<Long, Map<String, Integer>> benefitAmountData;
-    // 日額入院給付金データを保持するマップ (Product ID -> 年齢層 -> 日額)
+    // 日額入院給付金データを保持する
     private Map<Long, Map<String, Integer>> dailyHospitalizationFeeData;
-    // 支払い回数データを保持するマップ (Product ID -> 年齢層 -> 回数)
+    // 支払い回数データを保持する
     private Map<Long, Map<String, Integer>> numberOfPaymentsData;
-    // 支払い日数データを保持するマップ (Product ID -> 年齢層 -> 日数)
+    // 支払い日数データを保持する
     private Map<Long, Map<String, Integer>> paymentDaysData;
 
 
@@ -56,7 +55,7 @@ public class EstimateService {
         this.userRepository = userRepository;
     }
 
-    @PostConstruct // アプリケーション起動時に一度だけ実行される
+    @PostConstruct 
     public void initPremiumData() {
         premiumData = new HashMap<>();
         benefitAmountData = new HashMap<>();
@@ -100,11 +99,11 @@ public class EstimateService {
         premiumData.put(3L, medicalInsurance);
 
         Map<String, Integer> medicalDailyFee = new HashMap<>();
-        medicalDailyFee.put("0-79", 5000); // 5000円
+        medicalDailyFee.put("0-79", 5000); 
         dailyHospitalizationFeeData.put(3L, medicalDailyFee);
 
         Map<String, Integer> medicalPaymentDays = new HashMap<>();
-        medicalPaymentDays.put("0-79", 60); // 60日
+        medicalPaymentDays.put("0-79", 60); 
         paymentDaysData.put(3L, medicalPaymentDays);
 
 
@@ -124,13 +123,13 @@ public class EstimateService {
         premiumData.put(1L, cancerInsurance);
 
         Map<String, Integer> cancerBenefit = new HashMap<>();
-        cancerBenefit.put("0-19", 500000); // 50万円
-        cancerBenefit.put("20-79", 1000000); // 100万円
+        cancerBenefit.put("0-19", 500000); 
+        cancerBenefit.put("20-79", 1000000); 
         benefitAmountData.put(1L, cancerBenefit);
 
         Map<String, Integer> cancerPayments = new HashMap<>();
-        cancerPayments.put("0-19", 2); // 2回
-        cancerPayments.put("20-79", 1); // 1回
+        cancerPayments.put("0-19", 2); 
+        cancerPayments.put("20-79", 1); 
         numberOfPaymentsData.put(1L, cancerPayments);
     }
 
@@ -139,7 +138,7 @@ public class EstimateService {
         int age = quoteForm.getAge();
         String gender = quoteForm.getGender();
 
-        Integer monthlyPremiumInt = 0; // 一時的にIntegerで保持
+        Integer monthlyPremiumInt = 0; 
         Integer benefitAmountInt = null;
         Integer dailyHospitalizationFeeInt = null;
         Integer numberOfPaymentsInt = null;
@@ -165,7 +164,7 @@ public class EstimateService {
             System.err.println("WARN: Product ID " + productId + " not found in premium data.");
         }
 
-        // 各保険タイプ固有の給付金、日額、回数、日数などの取得
+        // 給付金、日額、回数、日数などの取得
         if (productId == 2L) { // 終身保険
             insuranceContent = "一生涯の死亡保障が得られる終身保険";
             if (benefitAmountData.containsKey(productId) && benefitAmountData.get(productId).containsKey("0-79")) {
@@ -190,15 +189,13 @@ public class EstimateService {
             }
         }
 
-        // QuoteForm に計算結果を設定
-        // Integer から BigDecimal へ変換
         quoteForm.setMonthlyPremium(BigDecimal.valueOf(monthlyPremiumInt));
         quoteForm.setBenefitAmount(benefitAmountInt != null ? BigDecimal.valueOf(benefitAmountInt) : null);
         quoteForm.setDailyHospitalizationFee(dailyHospitalizationFeeInt != null ? BigDecimal.valueOf(dailyHospitalizationFeeInt) : null);
-        quoteForm.setNumberOfPayments(numberOfPaymentsInt); // これはIntegerのまま
-        quoteForm.setPaymentDays(paymentDaysInt); // これはIntegerのまま
+        quoteForm.setNumberOfPayments(numberOfPaymentsInt); 
+        quoteForm.setPaymentDays(paymentDaysInt); 
         quoteForm.setInsuranceContent(insuranceContent);
-        quoteForm.setSurrenderValue(null); // 解約返戻金はここでは計算しないためnull
+        quoteForm.setSurrenderValue(null); 
 
         return quoteForm;
     }
@@ -215,7 +212,6 @@ public class EstimateService {
         return "Unknown";
     }
 
-    // --- 既存のメソッドは変更なし ---
     @Transactional(readOnly = true)
     public Optional<Estimate> findEstimateById(Long id) {
         return estimateRepository.findById(id);
@@ -255,7 +251,7 @@ public class EstimateService {
         estimate.setEstimateDate(LocalDate.now());
 
         if (estimate.getAmount() == null) {
-             estimate.setAmount(monthlyPremium.intValue()); // BigDecimalからintへの変換は精度に注意
+             estimate.setAmount(monthlyPremium.intValue()); 
         }
 
         return estimateRepository.save(estimate);

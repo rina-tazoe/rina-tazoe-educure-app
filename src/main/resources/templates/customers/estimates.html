@@ -3,33 +3,16 @@
 <head>
     <title>顧客見積もり一覧</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <style>
-        /* 簡単なスタイルを追加 */
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h1, h2, h3 { color: #333; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .button-group { margin-top: 20px; }
-        .btn {
-            display: inline-block;
-            padding: 8px 15px;
-            text-decoration: none;
-            color: #fff;
-            background-color: #007bff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 5px;
-        }
-        .btn-danger { background-color: #dc3545; } /* 削除ボタンのスタイル */
-        .btn:hover { background-color: #0056b3; }
-        .btn-danger:hover { background-color: #c82333; }
-        .delete-form { display: inline; } /* フォームをインライン表示 */
-    </style>
 </head>
 <body>
     <h1>顧客見積もり一覧</h1>
+
+    <div th:if="${message}" class="alert alert-success">
+        <p th:text="${message}"></p>
+    </div>
+    <div th:if="${error}" class="alert alert-danger">
+        <p th:text="${error}"></p>
+    </div>
 
     <div th:if="${customer}">
         <h2>顧客情報: <span th:text="${customer.lastName}"></span> <span th:text="${customer.firstName}"></span></h2>
@@ -56,22 +39,24 @@
                 <td th:text="${estimate.insuranceProduct.productName}"></td>
                 <td th:text="${#numbers.formatDecimal(estimate.monthlyPremium, 0, 'COMMA', 0, 'POINT')}"></td>
                 <td>
-                    <span th:if="${estimate.insuranceProduct.productId == 3L}">
-                        <span th:text="${#numbers.formatDecimal(estimate.dailyHospitalizationFee, 0, 'COMMA', 0, 'POINT')}"></span>
+                    <span th:if="${estimate.dailyHospitalizationFee != null}">
+                        <span th:text="${#numbers.formatDecimal(estimate.dailyHospitalizationFee, 0, 'COMMA', 0, 'POINT')}"></span>円 (日額)
                     </span>
-                    <span th:if="${estimate.insuranceProduct.productId == 1L or estimate.insuranceProduct.productId == 2L}">
-                        <span th:text="${#numbers.formatDecimal(estimate.benefitAmount, 0, 'COMMA', 0, 'POINT')}"></span>
+                    <span th:if="${estimate.benefitAmount != null}">
+                        <span th:text="${#numbers.formatDecimal(estimate.benefitAmount, 0, 'COMMA', 0, 'POINT')}"></span>円
                     </span>
                     <span th:if="${estimate.benefitAmount == null and estimate.dailyHospitalizationFee == null}">
-                        - </span>
+                        -
+                    </span>
                 </td>
                 <td th:text="${#temporals.format(estimate.estimateDate, 'yyyy/MM/dd')}"></td>
-                <td>
-                    <form th:action="@{/customers/{customerId}/estimates/{estimateId}/delete(customerId=${customer.id}, estimateId=${estimate.id})}" method="post" class="delete-form">
-                        <button type="submit" class="btn btn-danger"
-                                onclick="return confirm('本当にこの見積もりを削除しますか？');">削除</button>
-                    </form>
-                </td>
+				<td>
+				    <form th:action="@{/customers/{customerId}/estimates/{estimateId}/delete(customerId=${customer.id}, estimateId=${estimate.id})}" method="post" class="delete-form">
+				        <div class="button-group">
+				            <button type="submit" class="btn btn-primary" onclick="return confirm('本当にこの見積もりを削除しますか？');">削除</button>
+				        </div>
+				    </form>
+				</td>
             </tr>
             <tr th:if="${estimates.isEmpty()}">
                 <td colspan="6">この顧客には見積もり履歴がありません。</td>

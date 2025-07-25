@@ -12,10 +12,10 @@ import lombok.Data; // Lombokを使用する場合
 import lombok.NoArgsConstructor; // コンストラクタの競合を避けるため追加
 
 @Entity
-@Table(name = "roles") // データベースのテーブル名に合わせる
-@Data // Lombokのアノテーション: Getter, Setter など自動生成
-@NoArgsConstructor // 引数なしコンストラクタを自動生成
-@AllArgsConstructor // 全てのフィールドを引数に持つコンストラクタを自動生成
+@Table(name = "roles") 
+@Data 
+@NoArgsConstructor
+@AllArgsConstructor 
 public class Role {
 
     @Id
@@ -23,5 +23,5 @@ public class Role {
     private Long id;
 
     @Column(name = "name", nullable = false, unique = true)
-    private String name; // 例: ADMIN, USER (または ROLE_ADMIN, ROLE_USER)
+    private String name; 
 }

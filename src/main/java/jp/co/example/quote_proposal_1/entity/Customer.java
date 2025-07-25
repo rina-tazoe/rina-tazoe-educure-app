@@ -20,7 +20,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener; // �
 
 @Entity
 @Table(name = "customers")
-@EntityListeners(AuditingEntityListener.class) // ★ これだけ残す
+@EntityListeners(AuditingEntityListener.class) 
 public class Customer {
 
     @Id
@@ -50,17 +50,16 @@ public class Customer {
     private User registeredUser;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    @CreatedDate // ★ この行は正しいです
+    @CreatedDate 
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    @LastModifiedDate // ★ この行は正しいです
+    @LastModifiedDate 
     private LocalDateTime updatedAt;
 
     public Customer() {
     }
 
-    // --- GetterとSetter --- (変更なし)
     public Long getId() {
         return id;
     }

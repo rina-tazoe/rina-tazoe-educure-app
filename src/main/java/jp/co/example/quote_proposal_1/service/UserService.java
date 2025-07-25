@@ -20,7 +20,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder; // パスワードエンコーダーを注入
+    private final PasswordEncoder passwordEncoder; 
 
     @Autowired
     public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
@@ -29,45 +29,23 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    /**
-     * 全ユーザーを取得する
-     * @return ユーザーのリスト
-     */
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
 
-    /**
-     * 指定されたIDのユーザーを取得する
-     * @param id ユーザーID
-     * @return ユーザー (Optional)
-     */
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
 
-    /**
-     * ユーザー名でユーザーを取得する
-     * @param username ユーザー名
-     * @return ユーザー (Optional)
-     */
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
-
-    /**
-     * 新規ユーザーを登録する
-     * @param userForm ユーザーフォームデータ
-     * @return 登録されたユーザーエンティティ
-     * @throws IllegalArgumentException ロールが見つからない場合
-     */
+     
     public User registerUser(UserForm userForm) {
         User user = new User();
         user.setUsername(userForm.getUsername());
-        // パスワードをBCryptでエンコードして設定
         user.setPassword(passwordEncoder.encode(userForm.getPassword()));
 
-        // ロールIDからRoleエンティティを取得して設定
         Role role = roleRepository.findById(userForm.getRoleId())
                                   .orElseThrow(() -> new IllegalArgumentException("指定されたロールが見つかりません。ID: " + userForm.getRoleId()));
         user.setRole(role);
@@ -75,10 +53,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    /**
-     * ユーザーを削除する
-     * @param id 削除するユーザーのID
-     */
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }

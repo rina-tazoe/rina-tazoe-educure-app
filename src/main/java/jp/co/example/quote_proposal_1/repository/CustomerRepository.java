@@ -15,5 +15,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Query("SELECT c FROM Customer c JOIN FETCH c.registeredUser")
     List<Customer> findAllWithRegisteredUser();
 
-    Optional<Customer> findByEmail(String email); // ★追加
+    Optional<Customer> findByEmail(String email); 
 }

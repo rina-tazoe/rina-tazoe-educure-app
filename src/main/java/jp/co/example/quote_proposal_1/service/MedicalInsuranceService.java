@@ -1,4 +1,4 @@
-package jp.co.example.quote_proposal_1.service; // パッケージは適切に
+package jp.co.example.quote_proposal_1.service;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import jp.co.example.quote_proposal_1.entity.MedicalInsuranceDetail;
 import jp.co.example.quote_proposal_1.repository.MedicalInsuranceDetailRepository;
 
 @Service
-@Transactional(readOnly = true) // 読み取り専用のトランザクション設定
+@Transactional(readOnly = true) 
 public class MedicalInsuranceService {
 
     private final MedicalInsuranceDetailRepository medicalInsuranceDetailRepository;

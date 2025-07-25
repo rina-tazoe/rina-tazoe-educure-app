@@ -1,9 +1,8 @@
 package jp.co.example.quote_proposal_1.validation;
 
-public interface ValidationGroups {
-    // 見積もり計算時のバリデーショングループ
-    public interface QuoteCalculation {}
+import jakarta.validation.groups.Default;
 
-    // 顧客情報登録時のバリデーショングループ
-    public interface CustomerRegistration {}
+public class ValidationGroups {
+    public interface QuoteCalculation extends Default {} 
+    public interface CustomerRegistration extends Default {} 
 }

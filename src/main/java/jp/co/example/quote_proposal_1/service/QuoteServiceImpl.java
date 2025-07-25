@@ -40,7 +40,7 @@ public class QuoteServiceImpl implements QuoteService {
     @Autowired
     private UserRepository userRepository;
 
-    // 保険料データマップ
+    // 保険料データ
     private Map<Long, Map<String, Integer>> premiumData;
     private Map<Long, Map<String, Integer>> benefitAmountData;
     private Map<Long, Map<String, Integer>> dailyHospitalizationFeeData;
@@ -58,7 +58,7 @@ public class QuoteServiceImpl implements QuoteService {
         numberOfPaymentsData = new HashMap<>();
         surrenderValueData = new HashMap<>();
 
-        // 商品ID 1L: がん保険 (ご提示いただいたデータに修正)
+        // 商品ID 1L: がん保険 
         Map<String, Integer> cancerPremium = new HashMap<>();
         cancerPremium.put("0-9男性", 600); cancerPremium.put("0-9女性", 700);
         cancerPremium.put("10-19男性", 700); cancerPremium.put("10-19女性", 800);
@@ -77,14 +77,11 @@ public class QuoteServiceImpl implements QuoteService {
 
         // がん保険の支払い回数（年齢層で分岐）
         Map<String, Integer> cancerNumberOfPayments = new HashMap<>();
-        cancerNumberOfPayments.put("0-19", 2); // 2回
-        cancerNumberOfPayments.put("20-79", 1); // 1回
-        // numberOfPaymentsData.put(1L, ???) がMap<Long, Integer>なので直接設定できない。
-        // getCalculatedPremium内でageRangeと合わせて取得するように変更が必要。
-        // 現状はgetCalculatedPremium内で直接設定するロジックの方がシンプルかもしれません。
+        cancerNumberOfPayments.put("0-19", 2); 
+        cancerNumberOfPayments.put("20-79", 1); 
 
 
-        // 商品ID 2L: 終身保険 (ご提示いただいたデータに修正)
+        // 商品ID 2L: 終身保険
         Map<String, Integer> lifePremium = new HashMap<>();
         lifePremium.put("0-9男性", 2000); lifePremium.put("0-9女性", 2000);
         lifePremium.put("10-19男性", 2000); lifePremium.put("10-19女性", 1800);
@@ -97,12 +94,11 @@ public class QuoteServiceImpl implements QuoteService {
         premiumData.put(2L, lifePremium);
 
         Map<String, Integer> lifeBenefit = new HashMap<>();
-        lifeBenefit.put("0-79", 2000000); // 200万
+        lifeBenefit.put("0-79", 2000000); 
         benefitAmountData.put(2L, lifeBenefit);
-        // 終身保険の支払回数は固定値のまま (例: 60回払い)
         numberOfPaymentsData.put(2L, 60); 
 
-        // 商品ID 3L: 医療保険 (ご提示いただいたデータに修正)
+        // 商品ID 3L: 医療保険 
         Map<String, Integer> medicalPremium = new HashMap<>();
         medicalPremium.put("0-9男性", 1000); medicalPremium.put("0-9女性", 1000);
         medicalPremium.put("10-19男性", 1100); medicalPremium.put("10-19女性", 1100);
@@ -115,14 +111,14 @@ public class QuoteServiceImpl implements QuoteService {
         premiumData.put(3L, medicalPremium);
 
         Map<String, Integer> medicalDailyHospitalizationFee = new HashMap<>();
-        medicalDailyHospitalizationFee.put("0-79", 5000); // すべての年齢層で日額5000円と仮定
+        medicalDailyHospitalizationFee.put("0-79", 5000); // すべての年齢層で日額5000円
         dailyHospitalizationFeeData.put(3L, medicalDailyHospitalizationFee);
 
         Map<String, Integer> medicalPaymentDays = new HashMap<>();
-        medicalPaymentDays.put("0-79", 60); // すべての年齢層で最大支払い日数60日と仮定
+        medicalPaymentDays.put("0-79", 60); // すべての年齢層で最大支払い日数60日
         paymentDaysData.put(3L, medicalPaymentDays);
         
-        // 解約返戻金データの仮設定 (今回は簡略化のためデフォルト0)
+        // 解約返戻金データ
         Map<String, Integer> commonSurrenderValue = new HashMap<>();
         commonSurrenderValue.put("default", 0);
         surrenderValueData.put(1L, commonSurrenderValue); // がん保険
@@ -130,7 +126,7 @@ public class QuoteServiceImpl implements QuoteService {
         surrenderValueData.put(3L, commonSurrenderValue); // 医療保険
     }
 
-    // 見積もり計算ロジック
+    // 見積もり計算
     @Override
     public QuoteForm getCalculatedPremium(QuoteForm quoteForm) {
         System.out.println("DEBUG: QuoteService.getCalculatedPremium メソッドが呼び出されました。");
@@ -140,7 +136,7 @@ public class QuoteServiceImpl implements QuoteService {
         int age = quoteForm.getAge();
         String gender = quoteForm.getGender();
 
-        String ageRange = getAgeRange(age); // 修正された getAgeRange を使用
+        String ageRange = getAgeRange(age);
         System.out.println("DEBUG: Age Range: " + ageRange);
 
         // 保険商品情報を取得
@@ -148,7 +144,7 @@ public class QuoteServiceImpl implements QuoteService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid product ID: " + productId));
 
         quoteForm.setInsuranceName(product.getProductName());
-        String insuranceContent = product.getProductDescription(); // 初期値は商品DBから取得した説明文
+        String insuranceContent = product.getProductDescription();
 
 
         // 月々保険料の計算
@@ -168,7 +164,7 @@ public class QuoteServiceImpl implements QuoteService {
         System.out.println("DEBUG: Calculated Monthly Premium: " + monthlyPremiumInt);
 
 
-        // 保険種類ごとの固有情報の計算と設定
+        // 保険種類ごとの計算と設定
         Integer benefitAmountInt = null;
         Integer dailyHospitalizationFeeInt = null;
         Integer paymentDaysInt = null;
@@ -179,7 +175,6 @@ public class QuoteServiceImpl implements QuoteService {
         if (productId == 1L) { // がん保険
             // 給付金
             if (benefitAmountData.containsKey(productId)) {
-                // がん保険の給付金は年齢範囲で変わるため、getAgeRangeの戻り値で取得
                 if (age >= 0 && age <= 19) {
                     benefitAmountInt = benefitAmountData.get(productId).get("0-19");
                 } else if (age >= 20 && age <= 79) {
@@ -208,8 +203,8 @@ public class QuoteServiceImpl implements QuoteService {
             if (surrenderValueData.containsKey(productId)) {
                 surrenderValueInt = surrenderValueData.get(productId).get("default");
             }
-            dailyHospitalizationFeeInt = null; // がん保険では日額入院費は通常なし
-            paymentDaysInt = null; // がん保険では支払い期間は通常なし
+            dailyHospitalizationFeeInt = null;
+            paymentDaysInt = null; 
 
         } else if (productId == 2L) { // 終身保険
             // 給付金
@@ -237,7 +232,7 @@ public class QuoteServiceImpl implements QuoteService {
         } else if (productId == 3L) { // 医療保険
             // 日額入院費
             if (dailyHospitalizationFeeData.containsKey(productId) && dailyHospitalizationFeeData.get(productId).containsKey("0-79")) { 
-                dailyHospitalizationFeeInt = dailyHospitalizationFeeData.get(productId).get("0-79"); // 固定値取得
+                dailyHospitalizationFeeInt = dailyHospitalizationFeeData.get(productId).get("0-79"); 
                 insuranceContent += " - 1日あたり入院費 " + String.format("%,d", dailyHospitalizationFeeInt) + "円";
             } else {
                 insuranceContent += " - 1日あたり入院費 - 円";
@@ -246,21 +241,20 @@ public class QuoteServiceImpl implements QuoteService {
             
             // 最大支払い日数
             if (paymentDaysData.containsKey(productId) && paymentDaysData.get(productId).containsKey("0-79")) { 
-                paymentDaysInt = paymentDaysData.get(productId).get("0-79"); // 固定値取得
+                paymentDaysInt = paymentDaysData.get(productId).get("0-79"); 
                 insuranceContent += "、最大支払い日数 " + paymentDaysInt + "日";
             } else {
                 insuranceContent += "、最大支払い日数 - 日";
                 System.err.println("WARN: Payment days data not found for age range " + ageRange + " for product " + productId);
             }
             
-            // 医療保険の場合、benefitAmount は dailyHospitalizationFee に対応する
+            // 医療保険
             benefitAmountInt = dailyHospitalizationFeeInt; 
             if (surrenderValueData.containsKey(productId)) {
                 surrenderValueInt = surrenderValueData.get(productId).get("default");
             }
             numberOfPaymentsInt = null;
         } else {
-            // 未知の保険商品IDの場合のデフォルト処理
             quoteForm.setMonthlyPremium(BigDecimal.ZERO);
             quoteForm.setBenefitAmount(null);
             quoteForm.setDailyHospitalizationFee(null);
@@ -282,7 +276,7 @@ public class QuoteServiceImpl implements QuoteService {
         return quoteForm;
     }
 
-    // 年齢層を取得するヘルパーメソッド (ご提示いただいた年齢層に合わせて修正)
+    // 年齢層を取得する
     private String getAgeRange(int age) {
         if (age >= 0 && age <= 9) return "0-9";
         if (age >= 10 && age <= 19) return "10-19";
@@ -290,12 +284,11 @@ public class QuoteServiceImpl implements QuoteService {
         if (age >= 30 && age <= 39) return "30-39";
         if (age >= 40 && age <= 49) return "40-49";
         if (age >= 50 && age <= 59) return "50-59";
-        if (age >= 60 && age <= 69) return "60-69"; // 修正
-        if (age >= 70 && age <= 79) return "70-79"; // 修正
+        if (age >= 60 && age <= 69) return "60-69"; 
+        if (age >= 70 && age <= 79) return "70-79"; 
         return "その他"; 
     }
 
-    // registerQuote メソッド
     @Override
     public Quote registerQuote(QuoteForm quoteForm) {
         System.out.println("DEBUG: registerQuote method called for QuoteForm: " + quoteForm);

@@ -8,9 +8,8 @@ import jp.co.example.quote_proposal_1.entity.Customer;
 public interface CustomerService {
     List<Customer> findAllCustomers();
     Customer saveCustomer(Customer customer);
-    Optional<Customer> findByEmail(String email); // 既存
-    Optional<Customer> findById(Long id); // 既存
+    Optional<Customer> findByEmail(String email); 
+    Optional<Customer> findById(Long id); 
     
-    // ★追加: CustomerService インターフェースに findCustomerById メソッドを定義
     Customer findCustomerById(Long id);
 }
